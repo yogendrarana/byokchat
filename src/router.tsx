@@ -1,19 +1,19 @@
-import { createRouter as createTanstackRouter } from '@tanstack/react-router';
+import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 
-import { routeTree } from './routeTree.gen.ts';
-import NotFound from '@/components/not-found.tsx';
-import { queryClient } from '@/config/tanstack-query.ts'
+import { routeTree } from "./routeTree.gen.ts";
+import NotFound from "@/components/not-found.tsx";
+import { queryClient } from "@/config/tanstack-query.ts";
 
 // Create the router instance with better error handling
 export const router = createTanstackRouter({
   routeTree,
   context: {
-    queryClient,
+    queryClient
   },
   scrollRestoration: true,
   defaultPreloadStaleTime: 0,
   defaultNotFoundComponent: () => <NotFound />,
-  defaultPreload: 'intent',
+  defaultPreload: "intent"
 });
 
 export const createRouter = () => {
@@ -21,7 +21,7 @@ export const createRouter = () => {
 };
 
 // Register the router instance for type safety
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
     router: ReturnType<typeof createRouter>;
   }

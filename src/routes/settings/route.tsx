@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Settings2, User2 } from "lucide-react";
+import { Key, Settings2, User2 } from "lucide-react";
 import { createFileRoute, Link, Outlet, useLocation, useRouter } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import MaxWidthContainer from "@/components/max-width-container";
 
 const routes = [
     { label: "Account", icon: User2, href: "/settings" },
+    { label: "Providers", icon: Key, href: "/settings/providers" },
     { label: "Preferences", icon: Settings2, href: "/settings/preferences" }
 ];
 

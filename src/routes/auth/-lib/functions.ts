@@ -4,14 +4,8 @@ import { createServerFn } from '@tanstack/react-start';
 import db from '@/lib/db/db';
 import { auth } from '@/lib/auth/auth';
 import { preferenceSchema } from '@/lib/db/schema';
-import { RegisterUserSchema, type TRegisterUserSchema } from '@/lib/validation/auth';
 import { setResponseStatus } from '@tanstack/react-start/server';
-
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  message: string;
-  data?: T;
-}
+import { RegisterUserSchema, type TRegisterUserSchema } from '@/lib/validation/auth';
 
 export const registerUser = createServerFn({
   method: 'POST',

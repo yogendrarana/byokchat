@@ -13,14 +13,13 @@ import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteRouteImport } from './routes/settings/route'
-import { Route as ProjectsRouteRouteImport } from './routes/projects/route'
 import { Route as PricingRouteRouteImport } from './routes/pricing/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
-import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as PricingIndexRouteImport } from './routes/pricing/index'
-import { Route as ContactIndexRouteImport } from './routes/contact/index'
+import { Route as SettingsProvidersIndexRouteImport } from './routes/settings/providers/index'
 import { Route as SettingsPreferencesIndexRouteImport } from './routes/settings/preferences/index'
+import { ServerRoute as ApiKeysIdServerRouteImport } from './routes/api/keys/$id'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const AuthRegisterRouteLazyRouteImport = createFileRoute('/auth/register')()
@@ -32,11 +31,6 @@ const rootServerRouteImport = createServerRootRoute()
 const SettingsRouteRoute = SettingsRouteRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProjectsRouteRoute = ProjectsRouteRouteImport.update({
-  id: '/projects',
-  path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRouteRoute = PricingRouteRouteImport.update({
@@ -54,20 +48,10 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SettingsRouteRoute,
 } as any)
-const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ProjectsRouteRoute,
-} as any)
 const PricingIndexRoute = PricingIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PricingRouteRoute,
-} as any)
-const ContactIndexRoute = ContactIndexRouteImport.update({
-  id: '/contact/',
-  path: '/contact/',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRegisterRouteLazyRoute = AuthRegisterRouteLazyRouteImport.update({
   id: '/auth/register',
@@ -97,12 +81,22 @@ const AuthLoginIndexLazyRoute = AuthLoginIndexLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/auth/login/index.lazy').then((d) => d.Route),
 )
+const SettingsProvidersIndexRoute = SettingsProvidersIndexRouteImport.update({
+  id: '/providers/',
+  path: '/providers/',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
 const SettingsPreferencesIndexRoute =
   SettingsPreferencesIndexRouteImport.update({
     id: '/preferences/',
     path: '/preferences/',
     getParentRoute: () => SettingsRouteRoute,
   } as any)
+const ApiKeysIdServerRoute = ApiKeysIdServerRouteImport.update({
+  id: '/api/keys/$id',
+  path: '/api/keys/$id',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -112,25 +106,22 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/pricing': typeof PricingRouteRouteWithChildren
-  '/projects': typeof ProjectsRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
   '/auth/login': typeof AuthLoginRouteLazyRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteLazyRouteWithChildren
-  '/contact': typeof ContactIndexRoute
   '/pricing/': typeof PricingIndexRoute
-  '/projects/': typeof ProjectsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/settings/preferences': typeof SettingsPreferencesIndexRoute
+  '/settings/providers': typeof SettingsProvidersIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
   '/auth/register/': typeof AuthRegisterIndexLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/contact': typeof ContactIndexRoute
   '/pricing': typeof PricingIndexRoute
-  '/projects': typeof ProjectsIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/settings/preferences': typeof SettingsPreferencesIndexRoute
+  '/settings/providers': typeof SettingsProvidersIndexRoute
   '/auth/login': typeof AuthLoginIndexLazyRoute
   '/auth/register': typeof AuthRegisterIndexLazyRoute
 }
@@ -138,15 +129,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/pricing': typeof PricingRouteRouteWithChildren
-  '/projects': typeof ProjectsRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
   '/auth/login': typeof AuthLoginRouteLazyRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteLazyRouteWithChildren
-  '/contact/': typeof ContactIndexRoute
   '/pricing/': typeof PricingIndexRoute
-  '/projects/': typeof ProjectsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/settings/preferences/': typeof SettingsPreferencesIndexRoute
+  '/settings/providers/': typeof SettingsProvidersIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
   '/auth/register/': typeof AuthRegisterIndexLazyRoute
 }
@@ -155,40 +144,35 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/pricing'
-    | '/projects'
     | '/settings'
     | '/auth/login'
     | '/auth/register'
-    | '/contact'
     | '/pricing/'
-    | '/projects/'
     | '/settings/'
     | '/settings/preferences'
+    | '/settings/providers'
     | '/auth/login/'
     | '/auth/register/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/contact'
     | '/pricing'
-    | '/projects'
     | '/settings'
     | '/settings/preferences'
+    | '/settings/providers'
     | '/auth/login'
     | '/auth/register'
   id:
     | '__root__'
     | '/'
     | '/pricing'
-    | '/projects'
     | '/settings'
     | '/auth/login'
     | '/auth/register'
-    | '/contact/'
     | '/pricing/'
-    | '/projects/'
     | '/settings/'
     | '/settings/preferences/'
+    | '/settings/providers/'
     | '/auth/login/'
     | '/auth/register/'
   fileRoutesById: FileRoutesById
@@ -196,32 +180,34 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PricingRouteRoute: typeof PricingRouteRouteWithChildren
-  ProjectsRouteRoute: typeof ProjectsRouteRouteWithChildren
   SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
   AuthLoginRouteLazyRoute: typeof AuthLoginRouteLazyRouteWithChildren
   AuthRegisterRouteLazyRoute: typeof AuthRegisterRouteLazyRouteWithChildren
-  ContactIndexRoute: typeof ContactIndexRoute
 }
 export interface FileServerRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/keys/$id': typeof ApiKeysIdServerRoute
 }
 export interface FileServerRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/keys/$id': typeof ApiKeysIdServerRoute
 }
 export interface FileServerRoutesById {
   __root__: typeof rootServerRouteImport
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/keys/$id': typeof ApiKeysIdServerRoute
 }
 export interface FileServerRouteTypes {
   fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/auth/$'
+  fullPaths: '/api/auth/$' | '/api/keys/$id'
   fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/auth/$'
-  id: '__root__' | '/api/auth/$'
+  to: '/api/auth/$' | '/api/keys/$id'
+  id: '__root__' | '/api/auth/$' | '/api/keys/$id'
   fileServerRoutesById: FileServerRoutesById
 }
 export interface RootServerRouteChildren {
   ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiKeysIdServerRoute: typeof ApiKeysIdServerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -231,13 +217,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/projects': {
-      id: '/projects'
-      path: '/projects'
-      fullPath: '/projects'
-      preLoaderRoute: typeof ProjectsRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -261,26 +240,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRouteRoute
     }
-    '/projects/': {
-      id: '/projects/'
-      path: '/'
-      fullPath: '/projects/'
-      preLoaderRoute: typeof ProjectsIndexRouteImport
-      parentRoute: typeof ProjectsRouteRoute
-    }
     '/pricing/': {
       id: '/pricing/'
       path: '/'
       fullPath: '/pricing/'
       preLoaderRoute: typeof PricingIndexRouteImport
       parentRoute: typeof PricingRouteRoute
-    }
-    '/contact/': {
-      id: '/contact/'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactIndexRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/auth/register': {
       id: '/auth/register'
@@ -310,6 +275,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginIndexLazyRouteImport
       parentRoute: typeof AuthLoginRouteLazyRoute
     }
+    '/settings/providers/': {
+      id: '/settings/providers/'
+      path: '/providers'
+      fullPath: '/settings/providers'
+      preLoaderRoute: typeof SettingsProvidersIndexRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
     '/settings/preferences/': {
       id: '/settings/preferences/'
       path: '/preferences'
@@ -321,6 +293,13 @@ declare module '@tanstack/react-router' {
 }
 declare module '@tanstack/react-start/server' {
   interface ServerFileRoutesByPath {
+    '/api/keys/$id': {
+      id: '/api/keys/$id'
+      path: '/api/keys/$id'
+      fullPath: '/api/keys/$id'
+      preLoaderRoute: typeof ApiKeysIdServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -343,26 +322,16 @@ const PricingRouteRouteWithChildren = PricingRouteRoute._addFileChildren(
   PricingRouteRouteChildren,
 )
 
-interface ProjectsRouteRouteChildren {
-  ProjectsIndexRoute: typeof ProjectsIndexRoute
-}
-
-const ProjectsRouteRouteChildren: ProjectsRouteRouteChildren = {
-  ProjectsIndexRoute: ProjectsIndexRoute,
-}
-
-const ProjectsRouteRouteWithChildren = ProjectsRouteRoute._addFileChildren(
-  ProjectsRouteRouteChildren,
-)
-
 interface SettingsRouteRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsPreferencesIndexRoute: typeof SettingsPreferencesIndexRoute
+  SettingsProvidersIndexRoute: typeof SettingsProvidersIndexRoute
 }
 
 const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsPreferencesIndexRoute: SettingsPreferencesIndexRoute,
+  SettingsProvidersIndexRoute: SettingsProvidersIndexRoute,
 }
 
 const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
@@ -396,17 +365,16 @@ const AuthRegisterRouteLazyRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PricingRouteRoute: PricingRouteRouteWithChildren,
-  ProjectsRouteRoute: ProjectsRouteRouteWithChildren,
   SettingsRouteRoute: SettingsRouteRouteWithChildren,
   AuthLoginRouteLazyRoute: AuthLoginRouteLazyRouteWithChildren,
   AuthRegisterRouteLazyRoute: AuthRegisterRouteLazyRouteWithChildren,
-  ContactIndexRoute: ContactIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 const rootServerRouteChildren: RootServerRouteChildren = {
   ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+  ApiKeysIdServerRoute: ApiKeysIdServerRoute,
 }
 export const serverRouteTree = rootServerRouteImport
   ._addFileChildren(rootServerRouteChildren)

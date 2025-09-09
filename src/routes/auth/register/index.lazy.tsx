@@ -4,11 +4,11 @@ import { useForm } from "@tanstack/react-form";
 import { createLazyFileRoute, useRouter } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
-import { registerUser } from "@/server/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Google from "@/components/icons/google";
 import { Button } from "@/components/ui/button";
+import { registerUser } from "../-lib/functions";
 import { RegisterUserSchema } from "@/lib/validation/auth";
 
 export const Route = createLazyFileRoute("/auth/register/")({
