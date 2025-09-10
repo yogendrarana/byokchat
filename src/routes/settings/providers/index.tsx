@@ -1,8 +1,7 @@
 import { Key } from "lucide-react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 import { getProviderKeys } from "./-lib/functions";
-import { authClient } from "@/lib/auth/auth-client";
 import { MODEL_PROVIDERS } from "@/lib/model-providers";
 import SettingCard from "@/components/settings/setting-card";
 import SettingHeader from "@/components/settings/setting-header";
@@ -10,16 +9,8 @@ import { BYOKProviderCard } from "./-components/byok-provider-card";
 
 export const Route = createFileRoute("/settings/providers/")({
   component: RouteComponent,
-  loader: async ({ location }) => {
-    const session = await authClient.getSession();
-    if (!session?.data?.user?.id) {
-      throw redirect({
-        to: "/auth/login",
-        search: { redirect: location.href }
-      });
-    }
-
-    const { success, data } = await getProviderKeys({ data: { userId: session.data.user.id } });
+  loader: async () => {
+    const { success, data } = await getProviderKeys();
     return success ? data : null;
   }
 });
