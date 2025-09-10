@@ -1,6 +1,6 @@
 import React from "react";
 import { Key, Settings2, User2 } from "lucide-react";
-import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
 import Header from "@/components/layout/header";
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function RouteComponent() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { isPending, data } = authClient.useSession();
 
