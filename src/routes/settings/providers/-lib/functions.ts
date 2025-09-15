@@ -14,7 +14,7 @@ export const getProviderKeys = createServerFn().handler(async () => {
     headers: request.headers
   });
 
-  if (!session) {
+  if (!session?.user?.id) {
     return { success: false, message: "Unauthorized" };
   }
 
