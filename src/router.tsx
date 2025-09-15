@@ -13,7 +13,8 @@ export const router = createTanstackRouter({
   scrollRestoration: true,
   defaultPreloadStaleTime: 0,
   defaultNotFoundComponent: () => <NotFound />,
-  defaultPreload: "intent"
+  defaultPreload: "intent",
+  defaultStaleTime: 0
 });
 
 export const createRouter = () => {
