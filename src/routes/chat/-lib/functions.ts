@@ -2,13 +2,17 @@ import { auth } from "@/lib/auth/auth";
 
 import db from "@/lib/db/db";
 import type { ApiResponse } from "@/types/api";
-import { chatsSchema, type ChatsSelect } from "@/lib/db/schema";
+import { chatsSchema, type ChatMessagesSelect, type ChatsSelect } from "@/lib/db/schema";
 import { createServerFn, json } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
 import { ChatSchema, type TChatSchema } from "./validations";
 
+export type ChatWithMessages = ChatsSelect & {
+  messages: ChatMessagesSelect[];
+};
+
 // get user chats
-export const getUserChats = createServerFn().handler<ApiResponse<Array<ChatsSelect>>>(async () => {
+export const getUserChats = createServerFn().handler<ApiResponse<Array<ChatWithMessages>>>(async () => {
   try {
     const request = getWebRequest();
     const session = await auth.api.getSession({
@@ -24,7 +28,14 @@ export const getUserChats = createServerFn().handler<ApiResponse<Array<ChatsSele
 
     const chats = await db.query.chatsSchema.findMany({
       where: (table, { eq }) => eq(table.userId, session.user.id),
-      orderBy: (table, { desc }) => desc(table.createdAt)
+      orderBy: (table, { desc }) => desc(table.createdAt),
+      with: {
+        messages: {
+          orderBy(fields, operators) {
+            return operators.desc(fields.createdAt);
+          }
+        }
+      }
     });
 
     return {

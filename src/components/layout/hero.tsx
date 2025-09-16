@@ -15,6 +15,7 @@ import { useLocalStorage } from "@/hooks/use-localstorage";
 import { HERO_PAGE_PROMPT } from "@/constants/localstorage";
 import { postUserChat } from "@/routes/chat/-lib/functions";
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "../ui/dialog";
+import MaxWidthContainer from "../max-width-container";
 
 export default function Hero({ className }: { className?: string }) {
   const router = useRouter();
@@ -56,47 +57,49 @@ export default function Hero({ className }: { className?: string }) {
   };
 
   return (
-    <div className={cn("px-4 flex flex-col justify-center", className)}>
-      <main className="max-w-3xl mx-auto">
-        <div className="text-center">
-          <h1 className="text-4xl md:text-5xl font-semibold mb-4 tracking-tight">
-            Chat with AI Instantly
-          </h1>
-          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Ask questions, brainstorm ideas, or get insights—our AI delivers smart responses in real
-            time.
-          </p>
-        </div>
-
-        <PromptProvider initialPrompt={prompt} initialModel="gpt-4">
-          <PromptInputContainer showCredits>
-            <PromptTextarea onChange={handlePromptChange} rows={5} />
-            <PromptActions onSubmit={handlePromptSubmit} />
-          </PromptInputContainer>
-        </PromptProvider>
-      </main>
-
-      <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-        <DialogContent className="sm:max-w-md ">
-          <DialogHeader className="mb-6 text-center">
-            <DialogTitle className="text-2xl font-semibold text-gray-900">
-              Sign in to continue
-            </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              You need an account to generate ads
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="flex flex-col gap-3">
-            <Link className={cn(buttonVariants())} to="/auth/login">
-              Login
-            </Link>
-            <Link to="/auth/register" className={cn(buttonVariants({ variant: "outline" }))}>
-              Register
-            </Link>
+    <section id="hero" className="flex-1 flex flex-col border-b">
+      <MaxWidthContainer className="flex-1 flex flex-col sm:border-l sm:border-r">
+        <main className="max-w-3xl mx-auto flex-1 flex flex-col justify-center py-30">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-semibold mb-4 tracking-tight">
+              Chat with AI Instantly
+            </h1>
+            <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
+              Ask questions, brainstorm ideas, or get insights—our AI delivers smart responses in
+              real time.
+            </p>
           </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+
+          <PromptProvider initialPrompt={prompt} initialModel="gpt-4">
+            <PromptInputContainer showCredits>
+              <PromptTextarea onChange={handlePromptChange} rows={5} />
+              <PromptActions onSubmit={handlePromptSubmit} />
+            </PromptInputContainer>
+          </PromptProvider>
+        </main>
+
+        <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+          <DialogContent className="sm:max-w-md ">
+            <DialogHeader className="mb-6 text-center">
+              <DialogTitle className="text-2xl font-semibold text-gray-900">
+                Sign in to continue
+              </DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">
+                You need an account to generate ads
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="flex flex-col gap-3">
+              <Link className={cn(buttonVariants())} to="/auth/login">
+                Login
+              </Link>
+              <Link to="/auth/register" className={cn(buttonVariants({ variant: "outline" }))}>
+                Register
+              </Link>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </MaxWidthContainer>
+    </section>
   );
 }

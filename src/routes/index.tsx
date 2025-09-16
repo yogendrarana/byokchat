@@ -3,22 +3,29 @@ import { createFileRoute } from "@tanstack/react-router";
 import Hero from "@/components/layout/hero";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
-import MaxWidthContainer from "@/components/max-width-container";
+import { getUserChats } from "./chat/-lib/functions";
+import { ChatHistory } from "@/components/layout/chat-history";
 
 export const Route = createFileRoute("/")({
-    component: App
+  component: App,
+  loader: async () => {
+    const res = await getUserChats();
+    if (res.success && res.data) {
+      return res.data;
+    }
+    return [];
+  }
 });
 
 function App() {
-    return (
-        <div className="flex bg-muted/30">
-            <MaxWidthContainer>
-                <div className="h-screen flex flex-col justify-between border-l border-r">
-                    <Header />
-                    <Hero />
-                    <Footer className="border-t" />
-                </div>
-            </MaxWidthContainer>
-        </div>
-    );
+  const chats = Route.useLoaderData();
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <Hero />
+      <ChatHistory chats={chats} />
+      <Footer />
+    </div>
+  );
 }
