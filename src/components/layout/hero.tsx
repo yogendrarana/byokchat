@@ -2,31 +2,25 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 
-import {
-  PromptActions,
-  PromptProvider,
-  PromptTextarea,
-  PromptInputContainer
-} from "../prompt/prompt";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "../ui/button";
 import { authClient } from "@/lib/auth/auth-client";
+import MaxWidthContainer from "../max-width-container";
 import { useLocalStorage } from "@/hooks/use-localstorage";
-import { HERO_PAGE_PROMPT } from "@/constants/localstorage";
+import { USER_PROMPT } from "@/constants/localstorage";
 import { postUserChat } from "@/routes/chat/-lib/functions";
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "../ui/dialog";
-import MaxWidthContainer from "../max-width-container";
+import AiInput from "../prompt/ai-input";
 
 export default function Hero({ className }: { className?: string }) {
   const router = useRouter();
   const session = authClient.useSession();
 
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const [prompt, setPrompt] = useLocalStorage(HERO_PAGE_PROMPT, "");
+  const [prompt, setPrompt] = useLocalStorage(USER_PROMPT, "");
 
-  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setPrompt(value);
+  const handlePromptChange = (prompt: string) => {
+    setPrompt(prompt);
   };
 
   const handlePromptSubmit = async () => {
@@ -57,8 +51,8 @@ export default function Hero({ className }: { className?: string }) {
   };
 
   return (
-    <section id="hero" className="flex-1 flex flex-col border-b">
-      <MaxWidthContainer className="flex-1 flex flex-col sm:border-l sm:border-r">
+    <section id="hero" className={cn("flex-1 flex flex-col border-b", className)}>
+      <MaxWidthContainer className="flex-1 flex flex-col md:border-l md:border-r">
         <main className="max-w-3xl mx-auto flex-1 flex flex-col justify-center py-30">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-semibold mb-4 tracking-tight">
@@ -70,12 +64,11 @@ export default function Hero({ className }: { className?: string }) {
             </p>
           </div>
 
-          <PromptProvider initialPrompt={prompt} initialModel="gpt-4">
-            <PromptInputContainer showCredits>
-              <PromptTextarea onChange={handlePromptChange} rows={5} />
-              <PromptActions onSubmit={handlePromptSubmit} />
-            </PromptInputContainer>
-          </PromptProvider>
+          <AiInput
+            onPromptChange={handlePromptChange}
+            defaultPrompt={prompt}
+            onSubmit={handlePromptSubmit}
+          />
         </main>
 
         <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>

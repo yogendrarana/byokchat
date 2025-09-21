@@ -7,7 +7,7 @@ export default function Footer({ className }: { className?: string }) {
   return (
     <footer className={className}>
       <div className="border-b">
-        <MaxWidthContainer className="sm:border-l sm:border-r">
+        <MaxWidthContainer className="sm:border-l sm:border-r px-2 md:px-8">
           <div className="py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             {/* Left: Site name */}
             <p className="font-bold text-base text-foreground text-center md:text-left">

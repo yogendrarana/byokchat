@@ -18,7 +18,7 @@ const MaxWidthContainer: React.FC<PropTypes> = ({
     className = "",
     fluid = false
 }) => {
-    const baseStyles = cn("h-full w-full mx-auto px-2 md:px-4", !fluid && "max-w-screen-xl", className);
+    const baseStyles = cn("h-full w-full mx-auto", !fluid && "max-w-screen-xl", className);
 
     return <Comp className={baseStyles}>{children}</Comp>;
 };

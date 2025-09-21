@@ -13,11 +13,9 @@ import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteRouteImport } from './routes/settings/route'
-import { Route as PricingRouteRouteImport } from './routes/pricing/route'
 import { Route as ChatRouteRouteImport } from './routes/chat/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
-import { Route as PricingIndexRouteImport } from './routes/pricing/index'
 import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as SettingsProvidersIndexRouteImport } from './routes/settings/providers/index'
 import { Route as SettingsPreferencesIndexRouteImport } from './routes/settings/preferences/index'
@@ -37,11 +35,6 @@ const SettingsRouteRoute = SettingsRouteRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PricingRouteRoute = PricingRouteRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ChatRouteRoute = ChatRouteRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -56,11 +49,6 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsRouteRoute,
-} as any)
-const PricingIndexRoute = PricingIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PricingRouteRoute,
 } as any)
 const ChatIndexRoute = ChatIndexRouteImport.update({
   id: '/',
@@ -130,12 +118,10 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRouteRouteWithChildren
-  '/pricing': typeof PricingRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
   '/auth/login': typeof AuthLoginRouteLazyRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteLazyRouteWithChildren
   '/chat/': typeof ChatIndexRoute
-  '/pricing/': typeof PricingIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/chat/$id': typeof ChatIdIndexRoute
   '/settings/preferences': typeof SettingsPreferencesIndexRoute
@@ -146,7 +132,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatIndexRoute
-  '/pricing': typeof PricingIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/chat/$id': typeof ChatIdIndexRoute
   '/settings/preferences': typeof SettingsPreferencesIndexRoute
@@ -158,12 +143,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRouteRouteWithChildren
-  '/pricing': typeof PricingRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
   '/auth/login': typeof AuthLoginRouteLazyRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteLazyRouteWithChildren
   '/chat/': typeof ChatIndexRoute
-  '/pricing/': typeof PricingIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/chat/$id/': typeof ChatIdIndexRoute
   '/settings/preferences/': typeof SettingsPreferencesIndexRoute
@@ -176,12 +159,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/chat'
-    | '/pricing'
     | '/settings'
     | '/auth/login'
     | '/auth/register'
     | '/chat/'
-    | '/pricing/'
     | '/settings/'
     | '/chat/$id'
     | '/settings/preferences'
@@ -192,7 +173,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/chat'
-    | '/pricing'
     | '/settings'
     | '/chat/$id'
     | '/settings/preferences'
@@ -203,12 +183,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/chat'
-    | '/pricing'
     | '/settings'
     | '/auth/login'
     | '/auth/register'
     | '/chat/'
-    | '/pricing/'
     | '/settings/'
     | '/chat/$id/'
     | '/settings/preferences/'
@@ -220,7 +198,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRouteRoute: typeof ChatRouteRouteWithChildren
-  PricingRouteRoute: typeof PricingRouteRouteWithChildren
   SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
   AuthLoginRouteLazyRoute: typeof AuthLoginRouteLazyRouteWithChildren
   AuthRegisterRouteLazyRoute: typeof AuthRegisterRouteLazyRouteWithChildren
@@ -264,13 +241,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/chat': {
       id: '/chat'
       path: '/chat'
@@ -291,13 +261,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRouteRoute
-    }
-    '/pricing/': {
-      id: '/pricing/'
-      path: '/'
-      fullPath: '/pricing/'
-      preLoaderRoute: typeof PricingIndexRouteImport
-      parentRoute: typeof PricingRouteRoute
     }
     '/chat/': {
       id: '/chat/'
@@ -397,18 +360,6 @@ const ChatRouteRouteWithChildren = ChatRouteRoute._addFileChildren(
   ChatRouteRouteChildren,
 )
 
-interface PricingRouteRouteChildren {
-  PricingIndexRoute: typeof PricingIndexRoute
-}
-
-const PricingRouteRouteChildren: PricingRouteRouteChildren = {
-  PricingIndexRoute: PricingIndexRoute,
-}
-
-const PricingRouteRouteWithChildren = PricingRouteRoute._addFileChildren(
-  PricingRouteRouteChildren,
-)
-
 interface SettingsRouteRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsPreferencesIndexRoute: typeof SettingsPreferencesIndexRoute
@@ -452,7 +403,6 @@ const AuthRegisterRouteLazyRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRouteRoute: ChatRouteRouteWithChildren,
-  PricingRouteRoute: PricingRouteRouteWithChildren,
   SettingsRouteRoute: SettingsRouteRouteWithChildren,
   AuthLoginRouteLazyRoute: AuthLoginRouteLazyRouteWithChildren,
   AuthRegisterRouteLazyRoute: AuthRegisterRouteLazyRouteWithChildren,

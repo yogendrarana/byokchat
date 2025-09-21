@@ -37,11 +37,11 @@ export default function Header({ className }: { className?: string }) {
 
   return (
     <nav
-      className={cn("h-[70px] px-4 border-b sticky top-0 z-50", className, {
+      className={cn("h-[70px] border-b sticky top-0 z-50", className, {
         "bg-background duration-300": isHydrated && isScrolled
       })}
     >
-      <MaxWidthContainer className="h-full sm:border-l sm:border-r">
+      <MaxWidthContainer className="h-full md:border-l md:border-r px-2 md:px-4">
         <div className={cn("h-full w-full flex items-center justify-between duration-300")}>
           {/* Logo */}
           <div className="mr-6 flex">
