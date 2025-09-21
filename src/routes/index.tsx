@@ -24,7 +24,7 @@ function App() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <Hero />
-      <ChatHistory chats={chats} />
+      <ChatHistory chats={chats.slice(0, 6)} />
       <Footer />
     </div>
   );
