@@ -56,25 +56,26 @@ function RouteComponent() {
   );
 
   return (
-    <MaxWidthContainer>
-      <div className="min-h-screen border-l border-r flex flex-col">
-        <Header />
+    <div>
+      <Header />
+      <MaxWidthContainer className="h-full sm:border-l sm:border-r sm:px-0">
+        <div className="flex flex-col">
+          <div className="block md:hidden border-b">{NavContent}</div>
 
-        <div className="block md:hidden border-b">{NavContent}</div>
+          <div className="flex flex-1">
+            <div className="hidden md:block w-56 border-r sticky top-[70px] h-[calc(100vh-70px)]">
+              <ScrollArea className="h-full">{NavContent}</ScrollArea>
+            </div>
 
-        <div className="flex flex-1">
-          <div className="hidden md:block w-56 border-r sticky top-[70px] h-[calc(100vh-70px)]">
-            <ScrollArea className="h-full">{NavContent}</ScrollArea>
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 overflow-auto h-[calc(100vh-70px)]">
-            <ScrollArea className="h-full">
-              <Outlet />
-            </ScrollArea>
+            {/* Main Content */}
+            <div className="flex-1 overflow-auto h-[calc(100vh-70px)]">
+              <ScrollArea className="h-full">
+                <Outlet />
+              </ScrollArea>
+            </div>
           </div>
         </div>
-      </div>
-    </MaxWidthContainer>
+      </MaxWidthContainer>
+    </div>
   );
 }

@@ -1,32 +1,25 @@
 import * as React from "react";
-import { Link } from "@tanstack/react-router";
 import { Paperclip, ArrowUp, Mic, Loader, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 // --- Context and Hook ---
 interface PromptContextState {
-  inputValue: string;
-  setInputValue: React.Dispatch<React.SetStateAction<string>>;
-  selectedModel: string;
-  setSelectedModel: React.Dispatch<React.SetStateAction<string>>;
-  isSubmitting: boolean;
-  setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
+  internalValue: string;
+  setInternalValue: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   selectedFiles: File[];
   setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>>;
   imagePreviews: string[];
   setImagePreviews: React.Dispatch<React.SetStateAction<string[]>>;
+  onSubmit?: () => void;
+  onChange?: (value: string) => void;
 }
 
+// --- PromptInputContext and Hook ---
 const PromptContext = React.createContext<PromptContextState | undefined>(undefined);
 
 export function usePrompt() {
@@ -35,68 +28,64 @@ export function usePrompt() {
   return context;
 }
 
+// --- PromptProvider ---
 interface PromptProviderProps {
-  initialModel?: string;
-  initialPrompt?: string;
+  value?: string;
   children: React.ReactNode;
+  onSubmit?: () => void;
+  onChange?: (value: string) => void;
 }
 
-export function PromptProvider({
-  initialModel = "gpt-4",
-  children,
-  initialPrompt = ""
+function PromptProvider({
+  value = "",
+  onChange,
+  onSubmit,
+  children
 }: PromptProviderProps) {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [selectedModel, setSelectedModel] = React.useState(initialModel);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [selectedFiles, setSelectedFiles] = React.useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = React.useState<string[]>([]);
-  const [inputValue, setInputValue] = React.useState(initialPrompt);
+  const [internalValue, setInternalValue] = React.useState(value);
 
   React.useEffect(() => {
-    setInputValue(initialPrompt);
-  }, [initialPrompt]);
+    setInternalValue(value);
+  }, [value]);
 
   return (
-    <PromptContext.Provider
-      value={{
-        inputValue,
-        setInputValue,
-        selectedModel,
-        setSelectedModel,
-        isSubmitting,
-        setIsSubmitting,
-        selectedFiles,
-        setSelectedFiles,
-        imagePreviews,
-        setImagePreviews
-      }}
-    >
-      {children}
-    </PromptContext.Provider>
+    <TooltipProvider>
+      <PromptContext.Provider
+        value={{
+          internalValue,
+          setInternalValue,
+          isLoading,
+          setIsLoading,
+          selectedFiles,
+          setSelectedFiles,
+          imagePreviews,
+          setImagePreviews,
+          onSubmit,
+          onChange
+        }}
+      >
+        {children}
+      </PromptContext.Provider>
+    </TooltipProvider>
   );
 }
 
 // --- PromptInputContainer ---
 export interface PromptInputContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-  maxLength?: number;
-  showCredits?: boolean;
-  creditsText?: string;
-  upgradeLink?: string;
   ref?: React.Ref<HTMLDivElement>;
   children: React.ReactNode;
 }
 
-export function PromptInputContainer({
-  className,
-  maxLength = 2000,
-  showCredits = false,
-  creditsText = "Free users get 3 generations per day.",
-  upgradeLink = "/pricing",
+function PromptInputContainer({
+  className = "",
   ref,
   children,
   ...props
 }: PromptInputContainerProps) {
-  const { inputValue, imagePreviews, setImagePreviews, setSelectedFiles } = usePrompt();
+  const { imagePreviews, setImagePreviews, setSelectedFiles } = usePrompt();
 
   const handleRemoveImage = (idx: number) => {
     setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
@@ -106,38 +95,24 @@ export function PromptInputContainer({
   return (
     <div
       ref={ref}
-      className={cn(
-        "w-full p-1 mx-auto shadow-sm bg-muted rounded-xl border border-border",
-        className
-      )}
+      className={cn("w-full p-1 bg-muted border border-border rounded-xl", className)}
       {...props}
     >
-      {showCredits && (
-        <div className="p-2 flex items-center justify-between text-xs text-muted-foreground">
-          <span>
-            {creditsText}{" "}
-            <Link to={upgradeLink} className="underline">
-              Upgrade for more credits
-            </Link>
-          </span>
-          <span className="text-muted-foreground/70">
-            {inputValue.length}/{maxLength}
-          </span>
-        </div>
-      )}
-
-      <div className="bg-background rounded-xl shadow-sm relative">
+      <div className="bg-background rounded-xl border border-border relative">
         {imagePreviews.length > 0 && (
           <div className="p-2 flex flex-wrap gap-2 border-b border-border">
             {imagePreviews.map((src, idx) => (
-              <div key={idx} className="relative w-12 h-12 bg-muted rounded-md overflow-hidden">
+              <div
+                key={idx}
+                className="group relative w-12 h-12 bg-muted rounded-md overflow-hidden"
+              >
                 <img src={src} alt={`Preview ${idx}`} className="object-cover w-full h-full" />
                 <Button
                   type="button"
                   variant="outline"
                   size="icon"
                   onClick={() => handleRemoveImage(idx)}
-                  className="absolute top-1 right-1 h-5 w-5 p-0 bg-background text-red-500 hover:text-red-600"
+                  className="opacity-0 group-hover:opacity-80 absolute top-1 right-1 h-5 w-5 p-0 bg-background text-red-500 hover:text-red-600"
                 >
                   <X className="h-3 w-3" />
                 </Button>
@@ -154,168 +129,171 @@ export function PromptInputContainer({
 // --- PromptTextarea ---
 export interface PromptTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   ref?: React.Ref<HTMLTextAreaElement>;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
-export function PromptTextarea({
+function PromptTextarea({
   className,
   ref,
   placeholder = "Create a summer campaign for eco-friendly water bottles targeting young professionals...",
-  onChange,
+  onKeyDown,
   ...props
 }: PromptTextareaProps) {
-  const { inputValue, setInputValue } = usePrompt();
+  const { internalValue, setInternalValue, onSubmit, onChange } = usePrompt();
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    onChange?.(e);
-    setInputValue(e.target.value);
+    setInternalValue(e.target.value);
+    onChange?.(e.target.value);
 
     // Auto-grow
-    e.target.style.height = "auto"; // reset
-    e.target.style.height = `${e.target.scrollHeight}px`; // set to content height
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
   }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      onSubmit?.();
+    }
+    onKeyDown?.(e);
+  };
 
   return (
     <textarea
       ref={ref}
       placeholder={placeholder}
+      onKeyDown={handleKeyDown}
+      value={internalValue}
+      onChange={handleChange}
       className={cn(
         "w-full min-h-[50px] px-4 py-3 text-sm resize-none border-0 outline-none bg-transparent placeholder:text-gray-400 focus:ring-0",
         className
       )}
-      value={inputValue}
-      onChange={handleChange}
       {...props}
     />
   );
 }
 
-// --- PromptActions ---
-export interface PromptActionsProps extends React.HTMLAttributes<HTMLDivElement> {
-  onSubmit?: () => void;
-  onVoiceInput?: () => void;
-  ref?: React.Ref<HTMLDivElement>;
+// --- PromptAction ---
+type PromptInputActionProps = {
+  className?: string;
+  tooltip: React.ReactNode;
+  children: React.ReactNode;
+  side?: "top" | "bottom" | "left" | "right";
+  disabled?: boolean;
+} & React.ComponentProps<typeof Tooltip>;
+
+function PromptAction({
+  tooltip,
+  children,
+  className,
+  side = "top",
+  disabled = false,
+  ...props
+}: PromptInputActionProps) {
+  return (
+    <Tooltip {...props}>
+      <TooltipTrigger asChild disabled={disabled} onClick={(event) => event.stopPropagation()}>
+        {children}
+      </TooltipTrigger>
+      <TooltipContent side={side} className={className}>
+        {tooltip}
+      </TooltipContent>
+    </Tooltip>
+  );
 }
 
-const defaultModels = [
-  { value: "gpt-4", label: "GPT-4" },
-  { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
-  { value: "claude-3", label: "Claude 3" },
-  { value: "gemini-pro", label: "Gemini Pro" }
-];
+// prompt file input
+interface PromptFileInputProps {
+  onFilesSelected?: (files: File[], previews: string[]) => void;
+}
 
-export function PromptActions({
-  className,
-  onSubmit,
-  onVoiceInput,
-  ref,
-  ...props
-}: PromptActionsProps) {
-  const {
-    selectedModel,
-    setSelectedModel,
-    isSubmitting,
-    inputValue,
-    setIsSubmitting,
-    setSelectedFiles,
-    setImagePreviews
-  } = usePrompt();
-
+function PromptFileInput({ onFilesSelected }: PromptFileInputProps) {
   const fileInputId = React.useId();
+  const { setImagePreviews, setSelectedFiles } = usePrompt();
 
-  async function handleSubmit() {
-    if (!onSubmit) return;
-    setIsSubmitting(true);
-    try {
-      await onSubmit();
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files ? Array.from(event.target.files) : [];
+
     if (files.length > 0) {
       setSelectedFiles((prev) => [...prev, ...files]);
 
-      const readers = files.map((file) => {
-        return new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.readAsDataURL(file);
-        });
-      });
+      const previews = await Promise.all(
+        files.map(
+          (file) =>
+            new Promise<string>((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result as string);
+              reader.readAsDataURL(file);
+            })
+        )
+      );
 
-      Promise.all(readers).then((newPreviews) => {
-        setImagePreviews((prev) => [...prev, ...newPreviews]);
-      });
+      setImagePreviews((prev) => [...prev, ...previews]);
+      onFilesSelected?.(files, previews);
     }
   };
 
   return (
-    <div
-      ref={ref}
-      className={cn("flex items-center justify-between p-2 border-t", className)}
-      {...props}
-    >
-      <div className="flex items-center gap-1">
-        <label htmlFor={fileInputId} className="cursor-pointer">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                asChild
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-8 w-8 p-2 bg-transparent"
-              >
-                <Paperclip className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="px-2 py-1 text-xs">Attach files</TooltipContent>
-          </Tooltip>
-          <input
-            id={fileInputId}
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={handleFileChange}
-          />
-        </label>
+    <PromptAction tooltip="Attach files">
+      <label htmlFor={fileInputId} className="cursor-pointer">
+        <Button
+          asChild
+          type="button"
+          variant="outline"
+          size="sm"
+          className="h-8 w-8 p-2 bg-transparent"
+        >
+          <Paperclip className="h-4 w-4" />
+        </Button>
+        <input
+          id={fileInputId}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={handleFileChange}
+        />
+      </label>
+    </PromptAction>
+  );
+}
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onVoiceInput}
-              className="h-8 w-8 p-2 bg-transparent"
-            >
-              <Mic className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent className="px-2 py-1 text-xs">Dictation</TooltipContent>
-        </Tooltip>
+// prompt audio input
+interface PromptAudioInputProps {
+  onVoiceInput?: () => void;
+}
 
-        {/* Model Select */}
-        <Select value={selectedModel} onValueChange={setSelectedModel}>
-          <SelectTrigger className="h-8 w-32 text-xs cursor-pointer">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {defaultModels.map((model) => (
-              <SelectItem key={model.value} value={model.value} className="cursor-pointer">
-                {model.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+function PromptAudioInput({ onVoiceInput }: PromptAudioInputProps) {
+  return (
+    <PromptAction tooltip="Dictation">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={onVoiceInput}
+        className="h-8 w-8 p-2 bg-transparent"
+        asChild
+      >
+        <Mic className="h-4 w-4" />
+      </Button>
+    </PromptAction>
+  );
+}
 
-      {/* Submit Button */}
-      {isSubmitting ? (
-        <Button variant="outline" disabled className="h-8 w-8">
+
+// prompt send button
+interface PromptSendButtonProps {
+  onSubmit: () => Promise<void>;
+}
+
+function PromptSendButton({ onSubmit }: PromptSendButtonProps) {
+  const { isLoading, internalValue } = usePrompt();
+
+  return (
+    <PromptAction tooltip="Send">
+      {isLoading ? (
+        <Button variant="outline" className="h-8 w-8">
           <Loader className="animate-spin" />
         </Button>
       ) : (
@@ -323,12 +301,22 @@ export function PromptActions({
           size="icon"
           variant="outline"
           className="h-8 w-8"
-          onClick={handleSubmit}
-          disabled={inputValue.trim().length === 0 || isSubmitting}
+          onClick={onSubmit}
+          disabled={internalValue.trim().length === 0 || isLoading}
         >
           <ArrowUp />
         </Button>
       )}
-    </div>
+    </PromptAction>
   );
 }
+
+export {
+  PromptProvider,
+  PromptInputContainer,
+  PromptTextarea,
+  PromptFileInput,
+  PromptAudioInput,
+  PromptSendButton,
+  PromptAction
+};

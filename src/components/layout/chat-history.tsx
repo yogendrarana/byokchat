@@ -18,7 +18,7 @@ export function ChatHistory({ chats }: { chats: ChatWithMessages[] }) {
   return (
     <section id="home" className="border-b">
       <MaxWidthContainer className="sm:border-l sm:border-r">
-        <div className="p-2 md:p-4 lg:p-8 space-y-8">
+        <div className="p-2 lg:p-8 space-y-8">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-medium text-foreground">Recent Conversations</h2>
