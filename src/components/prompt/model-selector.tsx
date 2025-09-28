@@ -1,4 +1,3 @@
-import React from "react";
 import { useModelStore } from "@/store/model-store";
 
 import {
@@ -50,7 +49,7 @@ export default function ModelSelector() {
             }
           }}
         >
-          <SelectTrigger className="h-8 w-32 text-xs cursor-pointer">
+          <SelectTrigger size="sm" className="h-8 w-32 text-xs cursor-pointer">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

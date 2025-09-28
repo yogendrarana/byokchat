@@ -12,16 +12,18 @@ import { createFileRoute } from '@tanstack/react-router'
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ThreadRouteRouteImport } from './routes/thread/route'
 import { Route as SettingsRouteRouteImport } from './routes/settings/route'
-import { Route as ChatRouteRouteImport } from './routes/chat/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ThreadIndexRouteImport } from './routes/thread/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
-import { Route as ChatIndexRouteImport } from './routes/chat/index'
+import { Route as ThreadIdIndexRouteImport } from './routes/thread/$id/index'
 import { Route as SettingsProvidersIndexRouteImport } from './routes/settings/providers/index'
 import { Route as SettingsPreferencesIndexRouteImport } from './routes/settings/preferences/index'
-import { Route as ChatIdIndexRouteImport } from './routes/chat/$id/index'
+import { ServerRoute as ApiThreadRouteServerRouteImport } from './routes/api/thread/route'
+import { ServerRoute as ApiChatRouteServerRouteImport } from './routes/api/chat/route'
+import { ServerRoute as ApiThreadIdServerRouteImport } from './routes/api/thread/$id'
 import { ServerRoute as ApiKeysIdServerRouteImport } from './routes/api/keys/$id'
-import { ServerRoute as ApiChatIdServerRouteImport } from './routes/api/chat/$id'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const AuthRegisterRouteLazyRouteImport = createFileRoute('/auth/register')()
@@ -30,14 +32,14 @@ const AuthRegisterIndexLazyRouteImport = createFileRoute('/auth/register/')()
 const AuthLoginIndexLazyRouteImport = createFileRoute('/auth/login/')()
 const rootServerRouteImport = createServerRootRoute()
 
+const ThreadRouteRoute = ThreadRouteRouteImport.update({
+  id: '/thread',
+  path: '/thread',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRouteRoute = SettingsRouteRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatRouteRoute = ChatRouteRouteImport.update({
-  id: '/chat',
-  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -45,15 +47,15 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ThreadIndexRoute = ThreadIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ThreadRouteRoute,
+} as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsRouteRoute,
-} as any)
-const ChatIndexRoute = ChatIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ChatRouteRoute,
 } as any)
 const AuthRegisterRouteLazyRoute = AuthRegisterRouteLazyRouteImport.update({
   id: '/auth/register',
@@ -83,6 +85,11 @@ const AuthLoginIndexLazyRoute = AuthLoginIndexLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/auth/login/index.lazy').then((d) => d.Route),
 )
+const ThreadIdIndexRoute = ThreadIdIndexRouteImport.update({
+  id: '/$id/',
+  path: '/$id/',
+  getParentRoute: () => ThreadRouteRoute,
+} as any)
 const SettingsProvidersIndexRoute = SettingsProvidersIndexRouteImport.update({
   id: '/providers/',
   path: '/providers/',
@@ -94,19 +101,24 @@ const SettingsPreferencesIndexRoute =
     path: '/preferences/',
     getParentRoute: () => SettingsRouteRoute,
   } as any)
-const ChatIdIndexRoute = ChatIdIndexRouteImport.update({
-  id: '/$id/',
-  path: '/$id/',
-  getParentRoute: () => ChatRouteRoute,
+const ApiThreadRouteServerRoute = ApiThreadRouteServerRouteImport.update({
+  id: '/api/thread',
+  path: '/api/thread',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiChatRouteServerRoute = ApiChatRouteServerRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiThreadIdServerRoute = ApiThreadIdServerRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiThreadRouteServerRoute,
 } as any)
 const ApiKeysIdServerRoute = ApiKeysIdServerRouteImport.update({
   id: '/api/keys/$id',
   path: '/api/keys/$id',
-  getParentRoute: () => rootServerRouteImport,
-} as any)
-const ApiChatIdServerRoute = ApiChatIdServerRouteImport.update({
-  id: '/api/chat/$id',
-  path: '/api/chat/$id',
   getParentRoute: () => rootServerRouteImport,
 } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
@@ -117,40 +129,40 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/chat': typeof ChatRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
+  '/thread': typeof ThreadRouteRouteWithChildren
   '/auth/login': typeof AuthLoginRouteLazyRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteLazyRouteWithChildren
-  '/chat/': typeof ChatIndexRoute
   '/settings/': typeof SettingsIndexRoute
-  '/chat/$id': typeof ChatIdIndexRoute
+  '/thread/': typeof ThreadIndexRoute
   '/settings/preferences': typeof SettingsPreferencesIndexRoute
   '/settings/providers': typeof SettingsProvidersIndexRoute
+  '/thread/$id': typeof ThreadIdIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
   '/auth/register/': typeof AuthRegisterIndexLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/chat': typeof ChatIndexRoute
   '/settings': typeof SettingsIndexRoute
-  '/chat/$id': typeof ChatIdIndexRoute
+  '/thread': typeof ThreadIndexRoute
   '/settings/preferences': typeof SettingsPreferencesIndexRoute
   '/settings/providers': typeof SettingsProvidersIndexRoute
+  '/thread/$id': typeof ThreadIdIndexRoute
   '/auth/login': typeof AuthLoginIndexLazyRoute
   '/auth/register': typeof AuthRegisterIndexLazyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/chat': typeof ChatRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
+  '/thread': typeof ThreadRouteRouteWithChildren
   '/auth/login': typeof AuthLoginRouteLazyRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteLazyRouteWithChildren
-  '/chat/': typeof ChatIndexRoute
   '/settings/': typeof SettingsIndexRoute
-  '/chat/$id/': typeof ChatIdIndexRoute
+  '/thread/': typeof ThreadIndexRoute
   '/settings/preferences/': typeof SettingsPreferencesIndexRoute
   '/settings/providers/': typeof SettingsProvidersIndexRoute
+  '/thread/$id/': typeof ThreadIdIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
   '/auth/register/': typeof AuthRegisterIndexLazyRoute
 }
@@ -158,94 +170,117 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/chat'
     | '/settings'
+    | '/thread'
     | '/auth/login'
     | '/auth/register'
-    | '/chat/'
     | '/settings/'
-    | '/chat/$id'
+    | '/thread/'
     | '/settings/preferences'
     | '/settings/providers'
+    | '/thread/$id'
     | '/auth/login/'
     | '/auth/register/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/chat'
     | '/settings'
-    | '/chat/$id'
+    | '/thread'
     | '/settings/preferences'
     | '/settings/providers'
+    | '/thread/$id'
     | '/auth/login'
     | '/auth/register'
   id:
     | '__root__'
     | '/'
-    | '/chat'
     | '/settings'
+    | '/thread'
     | '/auth/login'
     | '/auth/register'
-    | '/chat/'
     | '/settings/'
-    | '/chat/$id/'
+    | '/thread/'
     | '/settings/preferences/'
     | '/settings/providers/'
+    | '/thread/$id/'
     | '/auth/login/'
     | '/auth/register/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ChatRouteRoute: typeof ChatRouteRouteWithChildren
   SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
+  ThreadRouteRoute: typeof ThreadRouteRouteWithChildren
   AuthLoginRouteLazyRoute: typeof AuthLoginRouteLazyRouteWithChildren
   AuthRegisterRouteLazyRoute: typeof AuthRegisterRouteLazyRouteWithChildren
 }
 export interface FileServerRoutesByFullPath {
+  '/api/chat': typeof ApiChatRouteServerRoute
+  '/api/thread': typeof ApiThreadRouteServerRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatServerRoute
-  '/api/chat/$id': typeof ApiChatIdServerRoute
   '/api/keys/$id': typeof ApiKeysIdServerRoute
+  '/api/thread/$id': typeof ApiThreadIdServerRoute
 }
 export interface FileServerRoutesByTo {
+  '/api/chat': typeof ApiChatRouteServerRoute
+  '/api/thread': typeof ApiThreadRouteServerRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatServerRoute
-  '/api/chat/$id': typeof ApiChatIdServerRoute
   '/api/keys/$id': typeof ApiKeysIdServerRoute
+  '/api/thread/$id': typeof ApiThreadIdServerRoute
 }
 export interface FileServerRoutesById {
   __root__: typeof rootServerRouteImport
+  '/api/chat': typeof ApiChatRouteServerRoute
+  '/api/thread': typeof ApiThreadRouteServerRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatServerRoute
-  '/api/chat/$id': typeof ApiChatIdServerRoute
   '/api/keys/$id': typeof ApiKeysIdServerRoute
+  '/api/thread/$id': typeof ApiThreadIdServerRoute
 }
 export interface FileServerRouteTypes {
   fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/auth/$' | '/api/chat/$id' | '/api/keys/$id'
+  fullPaths:
+    | '/api/chat'
+    | '/api/thread'
+    | '/api/auth/$'
+    | '/api/keys/$id'
+    | '/api/thread/$id'
   fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/auth/$' | '/api/chat/$id' | '/api/keys/$id'
-  id: '__root__' | '/api/auth/$' | '/api/chat/$id' | '/api/keys/$id'
+  to:
+    | '/api/chat'
+    | '/api/thread'
+    | '/api/auth/$'
+    | '/api/keys/$id'
+    | '/api/thread/$id'
+  id:
+    | '__root__'
+    | '/api/chat'
+    | '/api/thread'
+    | '/api/auth/$'
+    | '/api/keys/$id'
+    | '/api/thread/$id'
   fileServerRoutesById: FileServerRoutesById
 }
 export interface RootServerRouteChildren {
+  ApiChatRouteServerRoute: typeof ApiChatRouteServerRoute
+  ApiThreadRouteServerRoute: typeof ApiThreadRouteServerRouteWithChildren
   ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
-  ApiChatIdServerRoute: typeof ApiChatIdServerRoute
   ApiKeysIdServerRoute: typeof ApiKeysIdServerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/thread': {
+      id: '/thread'
+      path: '/thread'
+      fullPath: '/thread'
+      preLoaderRoute: typeof ThreadRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -255,19 +290,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/thread/': {
+      id: '/thread/'
+      path: '/'
+      fullPath: '/thread/'
+      preLoaderRoute: typeof ThreadIndexRouteImport
+      parentRoute: typeof ThreadRouteRoute
+    }
     '/settings/': {
       id: '/settings/'
       path: '/'
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRouteRoute
-    }
-    '/chat/': {
-      id: '/chat/'
-      path: '/'
-      fullPath: '/chat/'
-      preLoaderRoute: typeof ChatIndexRouteImport
-      parentRoute: typeof ChatRouteRoute
     }
     '/auth/register': {
       id: '/auth/register'
@@ -297,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginIndexLazyRouteImport
       parentRoute: typeof AuthLoginRouteLazyRoute
     }
+    '/thread/$id/': {
+      id: '/thread/$id/'
+      path: '/$id'
+      fullPath: '/thread/$id'
+      preLoaderRoute: typeof ThreadIdIndexRouteImport
+      parentRoute: typeof ThreadRouteRoute
+    }
     '/settings/providers/': {
       id: '/settings/providers/'
       path: '/providers'
@@ -311,29 +353,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsPreferencesIndexRouteImport
       parentRoute: typeof SettingsRouteRoute
     }
-    '/chat/$id/': {
-      id: '/chat/$id/'
-      path: '/$id'
-      fullPath: '/chat/$id'
-      preLoaderRoute: typeof ChatIdIndexRouteImport
-      parentRoute: typeof ChatRouteRoute
-    }
   }
 }
 declare module '@tanstack/react-start/server' {
   interface ServerFileRoutesByPath {
+    '/api/thread': {
+      id: '/api/thread'
+      path: '/api/thread'
+      fullPath: '/api/thread'
+      preLoaderRoute: typeof ApiThreadRouteServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/thread/$id': {
+      id: '/api/thread/$id'
+      path: '/$id'
+      fullPath: '/api/thread/$id'
+      preLoaderRoute: typeof ApiThreadIdServerRouteImport
+      parentRoute: typeof ApiThreadRouteServerRoute
+    }
     '/api/keys/$id': {
       id: '/api/keys/$id'
       path: '/api/keys/$id'
       fullPath: '/api/keys/$id'
       preLoaderRoute: typeof ApiKeysIdServerRouteImport
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/api/chat/$id': {
-      id: '/api/chat/$id'
-      path: '/api/chat/$id'
-      fullPath: '/api/chat/$id'
-      preLoaderRoute: typeof ApiChatIdServerRouteImport
       parentRoute: typeof rootServerRouteImport
     }
     '/api/auth/$': {
@@ -345,20 +394,6 @@ declare module '@tanstack/react-start/server' {
     }
   }
 }
-
-interface ChatRouteRouteChildren {
-  ChatIndexRoute: typeof ChatIndexRoute
-  ChatIdIndexRoute: typeof ChatIdIndexRoute
-}
-
-const ChatRouteRouteChildren: ChatRouteRouteChildren = {
-  ChatIndexRoute: ChatIndexRoute,
-  ChatIdIndexRoute: ChatIdIndexRoute,
-}
-
-const ChatRouteRouteWithChildren = ChatRouteRoute._addFileChildren(
-  ChatRouteRouteChildren,
-)
 
 interface SettingsRouteRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
@@ -374,6 +409,20 @@ const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
 
 const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
   SettingsRouteRouteChildren,
+)
+
+interface ThreadRouteRouteChildren {
+  ThreadIndexRoute: typeof ThreadIndexRoute
+  ThreadIdIndexRoute: typeof ThreadIdIndexRoute
+}
+
+const ThreadRouteRouteChildren: ThreadRouteRouteChildren = {
+  ThreadIndexRoute: ThreadIndexRoute,
+  ThreadIdIndexRoute: ThreadIdIndexRoute,
+}
+
+const ThreadRouteRouteWithChildren = ThreadRouteRoute._addFileChildren(
+  ThreadRouteRouteChildren,
 )
 
 interface AuthLoginRouteLazyRouteChildren {
@@ -400,10 +449,21 @@ const AuthRegisterRouteLazyRouteWithChildren =
     AuthRegisterRouteLazyRouteChildren,
   )
 
+interface ApiThreadRouteServerRouteChildren {
+  ApiThreadIdServerRoute: typeof ApiThreadIdServerRoute
+}
+
+const ApiThreadRouteServerRouteChildren: ApiThreadRouteServerRouteChildren = {
+  ApiThreadIdServerRoute: ApiThreadIdServerRoute,
+}
+
+const ApiThreadRouteServerRouteWithChildren =
+  ApiThreadRouteServerRoute._addFileChildren(ApiThreadRouteServerRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ChatRouteRoute: ChatRouteRouteWithChildren,
   SettingsRouteRoute: SettingsRouteRouteWithChildren,
+  ThreadRouteRoute: ThreadRouteRouteWithChildren,
   AuthLoginRouteLazyRoute: AuthLoginRouteLazyRouteWithChildren,
   AuthRegisterRouteLazyRoute: AuthRegisterRouteLazyRouteWithChildren,
 }
@@ -411,8 +471,9 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 const rootServerRouteChildren: RootServerRouteChildren = {
+  ApiChatRouteServerRoute: ApiChatRouteServerRoute,
+  ApiThreadRouteServerRoute: ApiThreadRouteServerRouteWithChildren,
   ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
-  ApiChatIdServerRoute: ApiChatIdServerRoute,
   ApiKeysIdServerRoute: ApiKeysIdServerRoute,
 }
 export const serverRouteTree = rootServerRouteImport

@@ -1,15 +1,20 @@
-import { Toaster } from 'sonner';
-import type { QueryClient } from '@tanstack/react-query';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import { Outlet, HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import { Toaster } from "sonner";
+import type { QueryClient } from "@tanstack/react-query";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import {
+  Outlet,
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+} from "@tanstack/react-router";
 
 // CSS files
-import globalsCss from '../styles/globals.css?url';
+import globalsCss from "../styles/globals.css?url";
 
-import { siteData } from '@/config/site';
-import { Providers } from '@/components/providers';
-import { ErrorBoundary } from '@/components/error-boundary';
-import { ThemeScript } from '@/components/theme-script';
+import { siteData } from "@/config/site";
+import { ThemeScript } from "@/components/theme-script";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { Providers } from "@/components/providers/providers";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -19,17 +24,17 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
       {
-        charSet: 'utf-8',
+        charSet: "utf-8",
       },
       {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
       },
       {
         title: `${siteData.name} - ${siteData.description}`,
       },
     ],
-    links: [{ rel: 'stylesheet', href: globalsCss }],
+    links: [{ rel: "stylesheet", href: globalsCss }],
   }),
 
   component: () => (
@@ -57,7 +62,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <Providers>{children}</Providers>
         <Toaster />
-        
+
         <Scripts />
         <TanStackRouterDevtools />
       </body>

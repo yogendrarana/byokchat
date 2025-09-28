@@ -1,0 +1,100 @@
+import { auth } from "@/lib/auth/auth";
+import { createServerFn, json } from "@tanstack/react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
+
+import db from "@/lib/db/db";
+import type { ApiResponse } from "@/types/api";
+import { ThreadSchema, type TThreadSchema } from "./validations";
+import { threadsSchema, type ThreadsSelect } from "@/lib/db/schema";
+import type { MessagesSelect } from "@/lib/db/schemas/messages-schema";
+
+export type ThreadsWithMessages = ThreadsSelect & {
+  messages: MessagesSelect[];
+};
+
+// get user threads
+export const getUserThreads = createServerFn().handler<ApiResponse<Array<ThreadsWithMessages>>>(
+  async () => {
+    try {
+      const request = getWebRequest();
+      const session = await auth.api.getSession({
+        headers: request.headers
+      });
+
+      if (!session?.user?.id) {
+        return {
+          success: false,
+          message: "Unauthorized"
+        };
+      }
+
+      const threads = await db.query.threadsSchema.findMany({
+        where: (table, { eq }) => eq(table.userId, session.user.id),
+        orderBy: (table, { desc }) => desc(table.createdAt),
+        with: {
+          messages: {
+            orderBy(table, { desc }) {
+              return desc(table.createdAt);
+            }
+          }
+        }
+      });
+
+      return {
+        success: true,
+        message: "Fetched user threads successfully!",
+        data: threads || []
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err?.message || "Something went wrong!"
+      };
+    }
+  }
+);
+
+// post user thread
+export const postThread = createServerFn({ method: "POST" })
+  .validator((data: TThreadSchema) => {
+    const result = ThreadSchema.safeParse(data);
+    if (!result.success || result.error) {
+      throw json({ success: false, message: "Invalid input data." }, { status: 400 });
+    }
+
+    return result.data;
+  })
+  .handler<ApiResponse<ThreadsSelect>>(async ({ data }) => {
+    try {
+      const request = getWebRequest();
+      const session = await auth.api.getSession({
+        headers: request.headers
+      });
+
+      if (!session?.user?.id) {
+        return {
+          success: false,
+          message: "Unauthorized"
+        };
+      }
+
+      const threads = await db
+        .insert(threadsSchema)
+        .values({
+          ...data,
+          userId: session.user.id
+        })
+        .returning();
+
+      return {
+        success: true,
+        message: "Inserted new threads successfully.",
+        data: threads[0]
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err?.message || "Something went wrong!"
+      };
+    }
+  });

@@ -3,22 +3,22 @@ import { Check, Loader, Trash2, X } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
-import { useChat } from "../-hooks/useChat";
 import { Button } from "@/components/ui/button";
-import type { ChatsSelect } from "@/lib/db/schema";
+import type { ThreadsSelect } from "@/lib/db/schema";
+import { useThreadApi } from "@/lib/hooks/use-thread-api";
 
 interface PropType {
-  chat: ChatsSelect;
+  thread: ThreadsSelect;
 }
 
 type DeleteState = "idle" | "confirm" | "loading";
 
-function ChatItem({ chat }: PropType) {
+function ThreadItem({ thread }: PropType) {
   const location = useLocation();
-  const { deleteChat } = useChat();
+  const { deleteThread } = useThreadApi();
   const [state, setState] = React.useState<DeleteState>("idle");
 
-  const handleDeleteChatItem = (e: React.MouseEvent) => {
+  const handleDeleteThreadItem = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -32,7 +32,7 @@ function ChatItem({ chat }: PropType) {
     if (state === "confirm") {
       setState("loading");
       setTimeout(() => {
-        deleteChat.mutate(chat.id);
+        deleteThread.mutate(thread.id);
         setState("idle");
       }, 1200);
     }
@@ -49,20 +49,20 @@ function ChatItem({ chat }: PropType) {
   return (
     <div className="relative group/item">
       <Link
-        to="/chat/$id"
-        params={{ id: chat.id }}
+        to="/thread/$id"
+        params={{ id: thread.id }}
         className={cn(
           "block p-3 border-b text-muted-foreground text-sm truncate transition-colors",
-          location.pathname === `/chat/${chat.id}` && "text-primary"
+          location.pathname === `/thread/${thread.id}` && "text-primary"
         )}
       >
-        <span className="truncate">{chat.title}</span>
+        <span className="truncate">{thread.title}</span>
       </Link>
 
       <ActionButtons
         state={state}
         showButtons={showButtons}
-        onTrash={handleDeleteChatItem}
+        onTrash={handleDeleteThreadItem}
         onConfirm={handleDeleteConfirm}
         onCancel={handleCancel}
       />
@@ -137,4 +137,4 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   );
 };
 
-export default ChatItem;
+export default ThreadItem;

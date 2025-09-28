@@ -3,14 +3,14 @@ import { useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
+import AiInput from "../prompt/ai-input";
 import { buttonVariants } from "../ui/button";
 import { authClient } from "@/lib/auth/auth-client";
 import MaxWidthContainer from "../max-width-container";
 import { useLocalStorage } from "@/hooks/use-localstorage";
 import { USER_PROMPT } from "@/constants/localstorage";
-import { postUserChat } from "@/routes/chat/-lib/functions";
+import { postThread } from "@/routes/thread/-lib/functions";
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "../ui/dialog";
-import AiInput from "../prompt/ai-input";
 
 export default function Hero({ className }: { className?: string }) {
   const router = useRouter();
@@ -35,18 +35,17 @@ export default function Hero({ className }: { className?: string }) {
       const {
         success,
         message,
-        data: createdChat
-      } = await postUserChat({ data: { title: truncatedTitle } });
+        data: chreatedThread
+      } = await postThread({ data: { title: truncatedTitle } });
 
-      if (success && createdChat?.id) {
-        toast.success(message || "Chat created successfully!");
-        router.navigate({ to: `/chat/${createdChat.id}` });
+      if (success && chreatedThread?.id) {
+        router.navigate({ to: `/thread/${chreatedThread.id}` });
         setPrompt("");
       } else {
-        toast.error(message || "Failed to create chat");
+        toast.error(message || "Failed to create thread");
       }
     } catch (err: any) {
-      toast.error(err?.message || "Error creating chat");
+      toast.error(err?.message || "Error creating thread");
     }
   };
 

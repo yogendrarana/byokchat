@@ -13,7 +13,7 @@ const getGreeting = () => {
   return "Good evening";
 };
 
-export const Route = createFileRoute("/chat/")({
+export const Route = createFileRoute("/thread/")({
   component: RouteComponent
 });
 

@@ -8,15 +8,15 @@ import {
   SidebarMenu,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
-import ChatItem from "./chat-item";
-import type { ChatsSelect } from "@/lib/db/schema";
+import ThreaItem from "./thread-item";
 import { buttonVariants } from "@/components/ui/button";
+import type { ThreadsSelect } from "@/lib/db/schema";
 
 interface PropType {
-  chats: Array<ChatsSelect>;
+  threads: Array<ThreadsSelect>;
 }
 
-export default function ChatSidebar({ chats }: PropType) {
+export default function ChatSidebar({ threads }: PropType) {
   return (
     <Sidebar>
       <SidebarHeader className="h-16 border-b border-border px-3 flex items-center justify-between">
@@ -25,19 +25,19 @@ export default function ChatSidebar({ chats }: PropType) {
             <Link to="/">BYOK</Link>
           </h2>
 
-          <Link to="/chat" className={buttonVariants({ size: "sm", variant: "secondary" })}>
+          <Link to="/thread" className={buttonVariants({ size: "sm", variant: "secondary" })}>
             <Plus />
-            <span>New Chat</span>
+            <span>New Thread</span>
           </Link>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarMenu className="gap-0">
-          {chats.map((chat) => {
+          {threads.map((t) => {
             return (
-              <SidebarMenuItem key={chat.id} className="">
-                <ChatItem chat={chat} />
+              <SidebarMenuItem key={t.id} className="">
+                <ThreaItem thread={t} />
               </SidebarMenuItem>
             );
           })}

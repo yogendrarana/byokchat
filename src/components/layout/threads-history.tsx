@@ -6,14 +6,14 @@ import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth/auth-client";
 import MaxWidthContainer from "../max-width-container";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { type ChatWithMessages } from "@/routes/chat/-lib/functions";
 import { format } from "date-fns";
+import type { ThreadsWithMessages } from "@/routes/thread/-lib/functions";
 
-export function ChatHistory({ chats }: { chats: ChatWithMessages[] }) {
+export function ThreadsHistory({ threads }: { threads: ThreadsWithMessages[] }) {
   const { isPending, error, data } = authClient.useSession();
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
 
-  if (isPending || error || !data?.user?.id || !chats.length) return null;
+  if (isPending || error || !data?.user?.id || !threads.length) return null;
 
   return (
     <section id="home" className="border-b">
@@ -21,7 +21,7 @@ export function ChatHistory({ chats }: { chats: ChatWithMessages[] }) {
         <div className="p-2 lg:p-8 space-y-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-medium text-foreground">Recent Conversations</h2>
+              <h2 className="text-xl font-medium text-foreground">Recent Threads</h2>
               <p className="text-sm text-muted-foreground">Continue where you left off</p>
             </div>
             <div className="flex items-center gap-1 border rounded-md p-1">
@@ -52,28 +52,28 @@ export function ChatHistory({ chats }: { chats: ChatWithMessages[] }) {
                 : "flex flex-col"
             )}
           >
-            {chats.map((chat) => {
+            {threads.map((thread) => {
               if (viewMode === "list") {
                 return (
                   <Link
-                    to="/chat/$id"
-                    params={{ id: chat.id }}
-                    key={chat.id}
+                    to="/thread/$id"
+                    params={{ id: thread.id }}
+                    key={thread.id}
                     className="group border border-border rounded-md p-4 hover:bg-muted/50 transition-colors cursor-pointer"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-foreground group-hover:text-foreground/80 transition-colors truncate text-sm">
-                          {chat.title}
+                          {thread.title}
                         </h3>
                         <p className="text-xs text-muted-foreground line-clamp-1 mt-1 mb-2">
-                          {chat.title}
+                          {thread.title}
                         </p>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span>{chat?.messages?.length} messages</span>
+                          <span>{thread?.messages?.length} messages</span>
                           <span>
-                            {chat.messages[0]?.createdAt
-                              ? format(chat.messages[0].createdAt, "dd MMM yyyy, hh:mm a")
+                            {thread.messages[0]?.createdAt
+                              ? format(thread.messages[0].createdAt, "dd MMM yyyy, hh:mm a")
                               : "No messages"}
                           </span>
                         </div>
@@ -85,20 +85,20 @@ export function ChatHistory({ chats }: { chats: ChatWithMessages[] }) {
 
               return (
                 <Link
-                  to="/chat/$id"
-                  params={{ id: chat.id }}
-                  key={chat.id}
+                  to="/thread/$id"
+                  params={{ id: thread.id }}
+                  key={thread.id}
                   className="group border border-border rounded-md p-4 hover:bg-muted/50 transition-colors cursor-pointer"
                 >
                   <h3 className="font-medium text-foreground mb-2 group-hover:text-foreground/80 transition-colors line-clamp-1 text-sm">
-                    {chat.title}
+                    {thread.title}
                   </h3>
-                  <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{chat.title}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{thread.title}</p>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>{chat?.messages?.length} messages</span>
+                    <span>{thread?.messages?.length} messages</span>
                     <span>
-                      {chat.messages[0]?.createdAt
-                        ? format(chat.messages[0].createdAt, "dd MMM yyyy, hh:mm a")
+                      {thread.messages[0]?.createdAt
+                        ? format(thread.messages[0].createdAt, "dd MMM yyyy, hh:mm a")
                         : "No messages"}
                     </span>
                   </div>
@@ -109,7 +109,7 @@ export function ChatHistory({ chats }: { chats: ChatWithMessages[] }) {
 
           <div className="text-center">
             <Link
-              to="/chat"
+              to="/thread"
               className={cn(buttonVariants({ size: "sm", variant: "outline" }), "text-xs")}
             >
               View All Conversations
