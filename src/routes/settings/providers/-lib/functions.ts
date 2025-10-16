@@ -4,7 +4,7 @@ import { getWebRequest } from "@tanstack/react-start/server";
 import db from "@/lib/db/db";
 import { auth } from "@/lib/auth/auth";
 import type { ApiResponse } from "@/types/api";
-import { MODEL_PROVIDERS } from "@/lib/model-providers";
+import { MODEL_PROVIDERS } from "@/lib/model";
 import { apiKeySchema, type ApiKeyInsert } from "@/lib/db/schema";
 
 // get provider keys

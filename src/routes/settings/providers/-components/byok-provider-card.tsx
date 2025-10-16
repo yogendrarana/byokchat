@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Key } from "lucide-react";
 import { BYOKKeyForm } from "./byok-form";
 import { BYOKKeyRow } from "./byok-row";
-import type { TModelProvider } from "@/lib/model-providers";
+import type { TModelProvider } from "@/lib/model";
 import type { ApiKeySelect } from "@/lib/db/schema";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 

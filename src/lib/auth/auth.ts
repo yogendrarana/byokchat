@@ -3,8 +3,8 @@ import { reactStartCookies } from 'better-auth/react-start';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 
 import db from '@/lib/db/db';
-import { userSchema } from '@/lib/db/schemas/auth-schema';
-import { accountSchema, sessionSchema, verificationSchema } from '@/lib/db/schemas/auth-schema';
+import { userSchema } from '@/lib/db/schema';
+import { accountSchema, sessionSchema, verificationSchema } from '@/lib/db/schema';
 
 export const auth = betterAuth({
   trustedOrigins: ['http://localhost:3000', 'https://localhost:3000'],

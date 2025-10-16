@@ -10,7 +10,6 @@ import {
   SelectValue
 } from "@/components/ui/select";
 
-import { BUILTIN_MODELS } from "@/lib/model-providers";
 import { PromptAction } from "./prompt";
 import { useAvailableModels } from "@/hooks/use-available-models";
 import type { TModel } from "@/store/model-store";
@@ -40,10 +39,6 @@ export default function ModelSelector() {
               if (foundModel) break;
             }
 
-            if (!foundModel) {
-              foundModel = BUILTIN_MODELS.find((m) => m.id === id);
-            }
-
             if (foundModel) {
               setSelectedModel(foundModel);
             }
@@ -64,12 +59,6 @@ export default function ModelSelector() {
                 </SelectGroup>
               );
             })}
-            <SelectGroup key="builtin">
-              <SelectLabel>Built-in</SelectLabel>
-              {BUILTIN_MODELS.map((model) => (
-                <ModelSelectItem key={model.id} model={model} />
-              ))}
-            </SelectGroup>
           </SelectContent>
         </Select>
       </PromptAction>

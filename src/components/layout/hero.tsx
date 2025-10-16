@@ -1,53 +1,14 @@
-import { toast } from "sonner";
 import { useState } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
-import AiInput from "../prompt/ai-input";
+import Chat from "../chat/chat";
 import { buttonVariants } from "../ui/button";
-import { authClient } from "@/lib/auth/auth-client";
 import MaxWidthContainer from "../max-width-container";
-import { useLocalStorage } from "@/hooks/use-localstorage";
-import { USER_PROMPT } from "@/constants/localstorage";
-import { postThread } from "@/routes/thread/-lib/functions";
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } from "../ui/dialog";
 
 export default function Hero({ className }: { className?: string }) {
-  const router = useRouter();
-  const session = authClient.useSession();
-
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const [prompt, setPrompt] = useLocalStorage(USER_PROMPT, "");
-
-  const handlePromptChange = (prompt: string) => {
-    setPrompt(prompt);
-  };
-
-  const handlePromptSubmit = async () => {
-    if (!session?.data?.user) {
-      setShowLoginDialog(true);
-      return;
-    }
-
-    const truncatedTitle = prompt.length > 255 ? prompt.slice(0, 255) : prompt;
-
-    try {
-      const {
-        success,
-        message,
-        data: chreatedThread
-      } = await postThread({ data: { title: truncatedTitle } });
-
-      if (success && chreatedThread?.id) {
-        router.navigate({ to: `/thread/${chreatedThread.id}` });
-        setPrompt("");
-      } else {
-        toast.error(message || "Failed to create thread");
-      }
-    } catch (err: any) {
-      toast.error(err?.message || "Error creating thread");
-    }
-  };
 
   return (
     <section id="hero" className={cn("flex-1 flex flex-col border-b", className)}>
@@ -63,11 +24,7 @@ export default function Hero({ className }: { className?: string }) {
             </p>
           </div>
 
-          <AiInput
-            onPromptChange={handlePromptChange}
-            defaultPrompt={prompt}
-            onSubmit={handlePromptSubmit}
-          />
+          <Chat threadId={undefined} />
         </main>
 
         <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>

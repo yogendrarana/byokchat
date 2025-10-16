@@ -10,7 +10,7 @@ import type { ApiKeyInsert } from "@/lib/db/schema";
 import { authClient } from "@/lib/auth/auth-client";
 import { useMutation } from "@tanstack/react-query";
 import { postProviderKeys } from "../-lib/functions";
-import type { TModelProvider } from "@/lib/model-providers";
+import type { TModelProvider } from "@/lib/model";
 
 interface BYOKKeyFormProps {
   onCancelAddingKey: () => void;

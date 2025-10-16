@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { preferenceSchema } from "./preference-schema";
+import { settingSchema } from "./setting";
 
 // session schema
 export const sessionSchema = pgTable("session", {
@@ -65,7 +65,7 @@ export const userSchema = pgTable("user", {
 
 // relations
 export const userRelations = relations(userSchema, ({ one }) => ({
-  preference: one(preferenceSchema)
+  preference: one(settingSchema)
 }));
 
 export type UserSelect = typeof userSchema.$inferSelect;

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth/auth-client";
 import { createFileRoute } from "@tanstack/react-router";
 
-import AiInput from "@/components/prompt/ai-input";
+import AiInput from "@/components/ai/ai-input";
 
 const getGreeting = () => {
   const hour = new Date().getHours();

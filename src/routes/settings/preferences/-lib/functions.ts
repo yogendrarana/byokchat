@@ -3,7 +3,7 @@ import { getWebRequest } from "@tanstack/react-start/server";
 
 import db from "@/lib/db/db";
 import { auth } from "@/lib/auth/auth";
-import { preferenceSchema, userSchema } from "@/lib/db/schema";
+import { settingSchema, userSchema } from "@/lib/db/schema";
 import { createServerFn, json } from "@tanstack/react-start";
 import { setResponseStatus } from "@tanstack/react-start/server";
 
@@ -26,20 +26,20 @@ export const updateMode = createServerFn({ method: "POST" })
 
     const preference = await db
       .select()
-      .from(preferenceSchema)
-      .where(eq(preferenceSchema.userId, userId))
+      .from(settingSchema)
+      .where(eq(settingSchema.userId, userId))
       .limit(1)
       .then((res) => res[0]);
 
     await db
-      .update(preferenceSchema)
+      .update(settingSchema)
       .set({
         appearanceSettings: {
           ...(preference.appearanceSettings ?? {}),
           theme
         }
       })
-      .where(eq(preferenceSchema.userId, userId));
+      .where(eq(settingSchema.userId, userId));
 
     setResponseStatus(200);
     return { success: true, message: `Set the theme to ${theme}` };
@@ -69,8 +69,8 @@ export const getUserPreference = createServerFn().handler(async () => {
 
   const preference = await db
     .select()
-    .from(preferenceSchema)
-    .where(eq(preferenceSchema.userId, session.user.id))
+    .from(settingSchema)
+    .where(eq(settingSchema.userId, session.user.id))
     .limit(1)
     .then((res) => res[0]);
 

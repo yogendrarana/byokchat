@@ -1,10 +1,10 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, varchar, serial, boolean, timestamp } from "drizzle-orm/pg-core";
 
-import { userSchema } from "./auth-schema";
+import { userSchema } from "./auth";
 
 // Provider Keys table (BYOK)
-export const apiKeySchema = pgTable("api_keys", {
+export const apiKeySchema = pgTable("api_key", {
   id: serial("id").primaryKey(),
   userId: text("user_id")
     .notNull()

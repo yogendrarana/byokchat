@@ -3,7 +3,7 @@ import { createServerFn } from '@tanstack/react-start';
 
 import db from '@/lib/db/db';
 import { auth } from '@/lib/auth/auth';
-import { preferenceSchema } from '@/lib/db/schema';
+import { settingSchema } from '@/lib/db/schema';
 import { setResponseStatus } from '@tanstack/react-start/server';
 import { RegisterUserSchema, type TRegisterUserSchema } from '@/lib/validation/auth';
 
@@ -30,7 +30,7 @@ export const registerUser = createServerFn({
         return { success: false, message: 'Failed to create user' };
       }
 
-      await db.insert(preferenceSchema).values({
+      await db.insert(settingSchema).values({
         userId: user.id,
         appearanceSettings: { theme: 'light' },
       });

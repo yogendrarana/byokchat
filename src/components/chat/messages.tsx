@@ -23,8 +23,7 @@ interface MessageItemProps {
 export function MessageItem({ message }: MessageItemProps) {
   const isUser = message.role === "user";
   return (
-    <div className={cn("w-full", isUser ? "text-right" : "text-left")}
-    >
+    <div className={cn("w-full", isUser ? "text-right" : "text-left")}>
       <div
         className={cn(
           "inline-block max-w-full whitespace-pre-wrap rounded-xl px-3 py-2 text-sm",
@@ -36,5 +35,3 @@ export function MessageItem({ message }: MessageItemProps) {
     </div>
   );
 }
-
-

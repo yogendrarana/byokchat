@@ -1,5 +1,5 @@
 {
-  "id": "df83c146-a590-4b1c-a39b-edc2b6bc0c3d",
+  "id": "8bf0249e-7f65-4fcc-9f3d-3d47e05d03c6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -308,8 +308,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.preference": {
-      "name": "preference",
+    "public.setting": {
+      "name": "setting",
       "schema": "",
       "columns": {
         "id": {
@@ -331,6 +331,13 @@
           "notNull": true,
           "default": "'{}'::jsonb"
         },
+        "storage_config": {
+          "name": "storage_config",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -348,9 +355,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "preference_user_id_user_id_fk": {
-          "name": "preference_user_id_user_id_fk",
-          "tableFrom": "preference",
+        "setting_user_id_user_id_fk": {
+          "name": "setting_user_id_user_id_fk",
+          "tableFrom": "setting",
           "tableTo": "user",
           "columnsFrom": [
             "user_id"
@@ -368,8 +375,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.api_keys": {
-      "name": "api_keys",
+    "public.api_key": {
+      "name": "api_key",
       "schema": "",
       "columns": {
         "id": {
@@ -425,9 +432,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "api_keys_user_id_user_id_fk": {
-          "name": "api_keys_user_id_user_id_fk",
-          "tableFrom": "api_keys",
+        "api_key_user_id_user_id_fk": {
+          "name": "api_key_user_id_user_id_fk",
+          "tableFrom": "api_key",
           "tableTo": "user",
           "columnsFrom": [
             "user_id"
@@ -504,8 +511,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.messages": {
-      "name": "messages",
+    "public.message": {
+      "name": "message",
       "schema": "",
       "columns": {
         "id": {
@@ -536,6 +543,13 @@
         },
         "content": {
           "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "parts": {
+          "name": "parts",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": true
@@ -563,9 +577,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "messages_thread_id_threads_id_fk": {
-          "name": "messages_thread_id_threads_id_fk",
-          "tableFrom": "messages",
+        "message_thread_id_threads_id_fk": {
+          "name": "message_thread_id_threads_id_fk",
+          "tableFrom": "message",
           "tableTo": "threads",
           "columnsFrom": [
             "thread_id"
