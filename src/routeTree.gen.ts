@@ -17,14 +17,18 @@ import { Route as SettingsRouteRouteImport } from './routes/settings/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ThreadIndexRouteImport } from './routes/thread/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
-import { Route as ThreadIdIndexRouteImport } from './routes/thread/$id/index'
+import { Route as ThreadIdRouteImport } from './routes/thread/$id'
+import { Route as SettingsStorageIndexRouteImport } from './routes/settings/storage/index'
 import { Route as SettingsProvidersIndexRouteImport } from './routes/settings/providers/index'
 import { Route as SettingsPreferencesIndexRouteImport } from './routes/settings/preferences/index'
 import { ServerRoute as ApiThreadRouteServerRouteImport } from './routes/api/thread/route'
 import { ServerRoute as ApiChatRouteServerRouteImport } from './routes/api/chat/route'
 import { ServerRoute as ApiThreadIdServerRouteImport } from './routes/api/thread/$id'
+import { ServerRoute as ApiSettingsStorageServerRouteImport } from './routes/api/settings/storage'
 import { ServerRoute as ApiKeysIdServerRouteImport } from './routes/api/keys/$id'
+import { ServerRoute as ApiDatabaseTestServerRouteImport } from './routes/api/database/test'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
+import { ServerRoute as ApiStorageTestRouteServerRouteImport } from './routes/api/storage/test/route'
 
 const AuthRegisterRouteLazyRouteImport = createFileRoute('/auth/register')()
 const AuthLoginRouteLazyRouteImport = createFileRoute('/auth/login')()
@@ -71,6 +75,11 @@ const AuthLoginRouteLazyRoute = AuthLoginRouteLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/auth/login/route.lazy').then((d) => d.Route),
 )
+const ThreadIdRoute = ThreadIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ThreadRouteRoute,
+} as any)
 const AuthRegisterIndexLazyRoute = AuthRegisterIndexLazyRouteImport.update({
   id: '/',
   path: '/',
@@ -85,10 +94,10 @@ const AuthLoginIndexLazyRoute = AuthLoginIndexLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/auth/login/index.lazy').then((d) => d.Route),
 )
-const ThreadIdIndexRoute = ThreadIdIndexRouteImport.update({
-  id: '/$id/',
-  path: '/$id/',
-  getParentRoute: () => ThreadRouteRoute,
+const SettingsStorageIndexRoute = SettingsStorageIndexRouteImport.update({
+  id: '/storage/',
+  path: '/storage/',
+  getParentRoute: () => SettingsRouteRoute,
 } as any)
 const SettingsProvidersIndexRoute = SettingsProvidersIndexRouteImport.update({
   id: '/providers/',
@@ -116,9 +125,20 @@ const ApiThreadIdServerRoute = ApiThreadIdServerRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiThreadRouteServerRoute,
 } as any)
+const ApiSettingsStorageServerRoute =
+  ApiSettingsStorageServerRouteImport.update({
+    id: '/api/settings/storage',
+    path: '/api/settings/storage',
+    getParentRoute: () => rootServerRouteImport,
+  } as any)
 const ApiKeysIdServerRoute = ApiKeysIdServerRouteImport.update({
   id: '/api/keys/$id',
   path: '/api/keys/$id',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiDatabaseTestServerRoute = ApiDatabaseTestServerRouteImport.update({
+  id: '/api/database/test',
+  path: '/api/database/test',
   getParentRoute: () => rootServerRouteImport,
 } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
@@ -126,28 +146,36 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootServerRouteImport,
 } as any)
+const ApiStorageTestRouteServerRoute =
+  ApiStorageTestRouteServerRouteImport.update({
+    id: '/api/storage/test',
+    path: '/api/storage/test',
+    getParentRoute: () => rootServerRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteRouteWithChildren
   '/thread': typeof ThreadRouteRouteWithChildren
+  '/thread/$id': typeof ThreadIdRoute
   '/auth/login': typeof AuthLoginRouteLazyRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteLazyRouteWithChildren
   '/settings/': typeof SettingsIndexRoute
   '/thread/': typeof ThreadIndexRoute
   '/settings/preferences': typeof SettingsPreferencesIndexRoute
   '/settings/providers': typeof SettingsProvidersIndexRoute
-  '/thread/$id': typeof ThreadIdIndexRoute
+  '/settings/storage': typeof SettingsStorageIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
   '/auth/register/': typeof AuthRegisterIndexLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/thread/$id': typeof ThreadIdRoute
   '/settings': typeof SettingsIndexRoute
   '/thread': typeof ThreadIndexRoute
   '/settings/preferences': typeof SettingsPreferencesIndexRoute
   '/settings/providers': typeof SettingsProvidersIndexRoute
-  '/thread/$id': typeof ThreadIdIndexRoute
+  '/settings/storage': typeof SettingsStorageIndexRoute
   '/auth/login': typeof AuthLoginIndexLazyRoute
   '/auth/register': typeof AuthRegisterIndexLazyRoute
 }
@@ -156,13 +184,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteRouteWithChildren
   '/thread': typeof ThreadRouteRouteWithChildren
+  '/thread/$id': typeof ThreadIdRoute
   '/auth/login': typeof AuthLoginRouteLazyRouteWithChildren
   '/auth/register': typeof AuthRegisterRouteLazyRouteWithChildren
   '/settings/': typeof SettingsIndexRoute
   '/thread/': typeof ThreadIndexRoute
   '/settings/preferences/': typeof SettingsPreferencesIndexRoute
   '/settings/providers/': typeof SettingsProvidersIndexRoute
-  '/thread/$id/': typeof ThreadIdIndexRoute
+  '/settings/storage/': typeof SettingsStorageIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
   '/auth/register/': typeof AuthRegisterIndexLazyRoute
 }
@@ -172,23 +201,25 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/thread'
+    | '/thread/$id'
     | '/auth/login'
     | '/auth/register'
     | '/settings/'
     | '/thread/'
     | '/settings/preferences'
     | '/settings/providers'
-    | '/thread/$id'
+    | '/settings/storage'
     | '/auth/login/'
     | '/auth/register/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/thread/$id'
     | '/settings'
     | '/thread'
     | '/settings/preferences'
     | '/settings/providers'
-    | '/thread/$id'
+    | '/settings/storage'
     | '/auth/login'
     | '/auth/register'
   id:
@@ -196,13 +227,14 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/thread'
+    | '/thread/$id'
     | '/auth/login'
     | '/auth/register'
     | '/settings/'
     | '/thread/'
     | '/settings/preferences/'
     | '/settings/providers/'
-    | '/thread/$id/'
+    | '/settings/storage/'
     | '/auth/login/'
     | '/auth/register/'
   fileRoutesById: FileRoutesById
@@ -217,23 +249,32 @@ export interface RootRouteChildren {
 export interface FileServerRoutesByFullPath {
   '/api/chat': typeof ApiChatRouteServerRoute
   '/api/thread': typeof ApiThreadRouteServerRouteWithChildren
+  '/api/storage/test': typeof ApiStorageTestRouteServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/database/test': typeof ApiDatabaseTestServerRoute
   '/api/keys/$id': typeof ApiKeysIdServerRoute
+  '/api/settings/storage': typeof ApiSettingsStorageServerRoute
   '/api/thread/$id': typeof ApiThreadIdServerRoute
 }
 export interface FileServerRoutesByTo {
   '/api/chat': typeof ApiChatRouteServerRoute
   '/api/thread': typeof ApiThreadRouteServerRouteWithChildren
+  '/api/storage/test': typeof ApiStorageTestRouteServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/database/test': typeof ApiDatabaseTestServerRoute
   '/api/keys/$id': typeof ApiKeysIdServerRoute
+  '/api/settings/storage': typeof ApiSettingsStorageServerRoute
   '/api/thread/$id': typeof ApiThreadIdServerRoute
 }
 export interface FileServerRoutesById {
   __root__: typeof rootServerRouteImport
   '/api/chat': typeof ApiChatRouteServerRoute
   '/api/thread': typeof ApiThreadRouteServerRouteWithChildren
+  '/api/storage/test': typeof ApiStorageTestRouteServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/database/test': typeof ApiDatabaseTestServerRoute
   '/api/keys/$id': typeof ApiKeysIdServerRoute
+  '/api/settings/storage': typeof ApiSettingsStorageServerRoute
   '/api/thread/$id': typeof ApiThreadIdServerRoute
 }
 export interface FileServerRouteTypes {
@@ -241,30 +282,42 @@ export interface FileServerRouteTypes {
   fullPaths:
     | '/api/chat'
     | '/api/thread'
+    | '/api/storage/test'
     | '/api/auth/$'
+    | '/api/database/test'
     | '/api/keys/$id'
+    | '/api/settings/storage'
     | '/api/thread/$id'
   fileServerRoutesByTo: FileServerRoutesByTo
   to:
     | '/api/chat'
     | '/api/thread'
+    | '/api/storage/test'
     | '/api/auth/$'
+    | '/api/database/test'
     | '/api/keys/$id'
+    | '/api/settings/storage'
     | '/api/thread/$id'
   id:
     | '__root__'
     | '/api/chat'
     | '/api/thread'
+    | '/api/storage/test'
     | '/api/auth/$'
+    | '/api/database/test'
     | '/api/keys/$id'
+    | '/api/settings/storage'
     | '/api/thread/$id'
   fileServerRoutesById: FileServerRoutesById
 }
 export interface RootServerRouteChildren {
   ApiChatRouteServerRoute: typeof ApiChatRouteServerRoute
   ApiThreadRouteServerRoute: typeof ApiThreadRouteServerRouteWithChildren
+  ApiStorageTestRouteServerRoute: typeof ApiStorageTestRouteServerRoute
   ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiDatabaseTestServerRoute: typeof ApiDatabaseTestServerRoute
   ApiKeysIdServerRoute: typeof ApiKeysIdServerRoute
+  ApiSettingsStorageServerRoute: typeof ApiSettingsStorageServerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -318,6 +371,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/thread/$id': {
+      id: '/thread/$id'
+      path: '/$id'
+      fullPath: '/thread/$id'
+      preLoaderRoute: typeof ThreadIdRouteImport
+      parentRoute: typeof ThreadRouteRoute
+    }
     '/auth/register/': {
       id: '/auth/register/'
       path: '/'
@@ -332,12 +392,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginIndexLazyRouteImport
       parentRoute: typeof AuthLoginRouteLazyRoute
     }
-    '/thread/$id/': {
-      id: '/thread/$id/'
-      path: '/$id'
-      fullPath: '/thread/$id'
-      preLoaderRoute: typeof ThreadIdIndexRouteImport
-      parentRoute: typeof ThreadRouteRoute
+    '/settings/storage/': {
+      id: '/settings/storage/'
+      path: '/storage'
+      fullPath: '/settings/storage'
+      preLoaderRoute: typeof SettingsStorageIndexRouteImport
+      parentRoute: typeof SettingsRouteRoute
     }
     '/settings/providers/': {
       id: '/settings/providers/'
@@ -378,11 +438,25 @@ declare module '@tanstack/react-start/server' {
       preLoaderRoute: typeof ApiThreadIdServerRouteImport
       parentRoute: typeof ApiThreadRouteServerRoute
     }
+    '/api/settings/storage': {
+      id: '/api/settings/storage'
+      path: '/api/settings/storage'
+      fullPath: '/api/settings/storage'
+      preLoaderRoute: typeof ApiSettingsStorageServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
     '/api/keys/$id': {
       id: '/api/keys/$id'
       path: '/api/keys/$id'
       fullPath: '/api/keys/$id'
       preLoaderRoute: typeof ApiKeysIdServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/database/test': {
+      id: '/api/database/test'
+      path: '/api/database/test'
+      fullPath: '/api/database/test'
+      preLoaderRoute: typeof ApiDatabaseTestServerRouteImport
       parentRoute: typeof rootServerRouteImport
     }
     '/api/auth/$': {
@@ -392,6 +466,13 @@ declare module '@tanstack/react-start/server' {
       preLoaderRoute: typeof ApiAuthSplatServerRouteImport
       parentRoute: typeof rootServerRouteImport
     }
+    '/api/storage/test': {
+      id: '/api/storage/test'
+      path: '/api/storage/test'
+      fullPath: '/api/storage/test'
+      preLoaderRoute: typeof ApiStorageTestRouteServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
   }
 }
 
@@ -399,12 +480,14 @@ interface SettingsRouteRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsPreferencesIndexRoute: typeof SettingsPreferencesIndexRoute
   SettingsProvidersIndexRoute: typeof SettingsProvidersIndexRoute
+  SettingsStorageIndexRoute: typeof SettingsStorageIndexRoute
 }
 
 const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsPreferencesIndexRoute: SettingsPreferencesIndexRoute,
   SettingsProvidersIndexRoute: SettingsProvidersIndexRoute,
+  SettingsStorageIndexRoute: SettingsStorageIndexRoute,
 }
 
 const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
@@ -412,13 +495,13 @@ const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
 )
 
 interface ThreadRouteRouteChildren {
+  ThreadIdRoute: typeof ThreadIdRoute
   ThreadIndexRoute: typeof ThreadIndexRoute
-  ThreadIdIndexRoute: typeof ThreadIdIndexRoute
 }
 
 const ThreadRouteRouteChildren: ThreadRouteRouteChildren = {
+  ThreadIdRoute: ThreadIdRoute,
   ThreadIndexRoute: ThreadIndexRoute,
-  ThreadIdIndexRoute: ThreadIdIndexRoute,
 }
 
 const ThreadRouteRouteWithChildren = ThreadRouteRoute._addFileChildren(
@@ -473,8 +556,11 @@ export const routeTree = rootRouteImport
 const rootServerRouteChildren: RootServerRouteChildren = {
   ApiChatRouteServerRoute: ApiChatRouteServerRoute,
   ApiThreadRouteServerRoute: ApiThreadRouteServerRouteWithChildren,
+  ApiStorageTestRouteServerRoute: ApiStorageTestRouteServerRoute,
   ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+  ApiDatabaseTestServerRoute: ApiDatabaseTestServerRoute,
   ApiKeysIdServerRoute: ApiKeysIdServerRoute,
+  ApiSettingsStorageServerRoute: ApiSettingsStorageServerRoute,
 }
 export const serverRouteTree = rootServerRouteImport
   ._addFileChildren(rootServerRouteChildren)

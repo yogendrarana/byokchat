@@ -1,12 +1,6 @@
 import * as React from "react";
 import { useHydrated } from "./use-hydrated";
 
-/**
- * Hook to safely access localStorage with hydration safety
- * @param key localStorage key
- * @param defaultValue default value if key doesn't exist
- * @returns [value, setStoredValue, deleteStoredValue] tuple
- */
 export function useLocalStorage<T>(key: string, defaultValue: T) {
   const isHydrated = useHydrated();
 
@@ -52,7 +46,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
     return () => window.removeEventListener("storage", handleStorage);
   }, [isHydrated, key]);
 
-  const setStoredValue = (newValue: T | ((prev: T) => T)) => {
+  const setStoredValue = (key: string, newValue: T | ((prev: T) => T)) => {
     setValue((prev) => {
       const valueToStore =
         typeof newValue === "function" ? (newValue as (prev: T) => T)(prev) : newValue;

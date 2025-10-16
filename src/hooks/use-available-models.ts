@@ -1,24 +1,17 @@
 import React, { useEffect } from "react";
-import { useModelStore, type TModel } from "@/store/model-store";
+import { type TModel } from "@/store/model-store";
 
 import { getProviderKeys } from "@/routes/settings/providers/-lib/functions";
-import { BUILTIN_MODELS, MODEL_PROVIDERS, type TProviderId } from "@/lib/model-providers";
+import { MODEL_PROVIDERS, type TCoreProvider } from "@/lib/model";
 
-type TAvailableModels = Partial<Record<TProviderId, TModel[]>>;
+type TAvailableModels = Partial<Record<TCoreProvider, TModel[]>>;
 
 export const useAvailableModels = () => {
   const [availableModels, setAvailablModels] = React.useState<TAvailableModels>({});
 
   useEffect(() => {
     const loadModels = async () => {
-      let selectedModel = useModelStore.getState().selectedModel;
-
-      const { success, data } = await getProviderKeys();
-
-      if (!success || !data || !selectedModel) {
-        selectedModel = BUILTIN_MODELS[0];
-        useModelStore.setState({ selectedModel });
-      }
+      const { data } = await getProviderKeys();
 
       const availableModelsByProvider: TAvailableModels = {};
 

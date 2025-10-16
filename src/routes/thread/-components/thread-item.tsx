@@ -5,7 +5,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import type { ThreadsSelect } from "@/lib/db/schema";
-import { useThreadApi } from "@/lib/hooks/use-thread-api";
+import { useThreadApi } from "@/hooks/use-thread-api";
 
 interface PropType {
   thread: ThreadsSelect;

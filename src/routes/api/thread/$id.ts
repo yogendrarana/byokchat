@@ -3,7 +3,7 @@ import { json } from "@tanstack/react-start";
 import { createServerFileRoute } from "@tanstack/react-start/server";
 
 import db from "@/lib/db/db";
-import { threadsSchema } from "@/lib/db/schema";
+import { threadSchema } from "@/lib/db/schema";
 
 export const ServerRoute = createServerFileRoute("/api/thread/$id").methods({
   DELETE: async ({ params }) => {
@@ -16,7 +16,7 @@ export const ServerRoute = createServerFileRoute("/api/thread/$id").methods({
         });
       }
 
-      await db.delete(threadsSchema).where(eq(threadsSchema.id, id));
+      await db.delete(threadSchema).where(eq(threadSchema.id, id));
 
       return json({ success: true, message: "Thread key deleted successfully." }, { status: 200 });
     } catch (err: any) {

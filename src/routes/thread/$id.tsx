@@ -1,12 +1,12 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
-import AiInput from "@/components/prompt/ai-input";
+import AiInput from "@/components/ai/ai-input";
 import { useModelStore } from "@/store/model-store";
 import { useAiSdkChat } from "@/hooks/use-aisdk-chat";
 import { Messages } from "@/components/chat/messages";
 
-export const Route = createFileRoute("/thread/$id/")({
+export const Route = createFileRoute("/thread/$id")({
   component: RouteComponent
 });
 

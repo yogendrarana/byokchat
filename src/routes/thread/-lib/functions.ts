@@ -5,8 +5,7 @@ import { getWebRequest } from "@tanstack/react-start/server";
 import db from "@/lib/db/db";
 import type { ApiResponse } from "@/types/api";
 import { ThreadSchema, type TThreadSchema } from "./validations";
-import { threadsSchema, type ThreadsSelect } from "@/lib/db/schema";
-import type { MessagesSelect } from "@/lib/db/schemas/messages-schema";
+import { threadSchema, type MessagesSelect, type ThreadsSelect } from "@/lib/db/schema";
 
 export type ThreadsWithMessages = ThreadsSelect & {
   messages: MessagesSelect[];
@@ -28,7 +27,7 @@ export const getUserThreads = createServerFn().handler<ApiResponse<Array<Threads
         };
       }
 
-      const threads = await db.query.threadsSchema.findMany({
+      const threads = await db.query.threadSchema.findMany({
         where: (table, { eq }) => eq(table.userId, session.user.id),
         orderBy: (table, { desc }) => desc(table.createdAt),
         with: {
@@ -79,7 +78,7 @@ export const postThread = createServerFn({ method: "POST" })
       }
 
       const threads = await db
-        .insert(threadsSchema)
+        .insert(threadSchema)
         .values({
           ...data,
           userId: session.user.id

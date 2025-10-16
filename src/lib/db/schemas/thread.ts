@@ -1,11 +1,11 @@
 import { relations } from "drizzle-orm";
 import { pgTable, varchar, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-import { userSchema } from "./auth-schema";
-import { messagesSchema } from "./messages-schema";
+import { userSchema } from "./auth";
+import { messageSchema } from "./message";
 
 // thread
-export const threadsSchema = pgTable("threads", {
+export const threadSchema = pgTable("threads", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id")
     .notNull()
@@ -16,10 +16,10 @@ export const threadsSchema = pgTable("threads", {
 });
 
 // relations
-export const threadsRelations = relations(threadsSchema, ({ many }) => ({
-  messages: many(messagesSchema)
+export const threadsRelations = relations(threadSchema, ({ many }) => ({
+  messages: many(messageSchema)
 }));
 
 // types
-export type ThreadsSelect = typeof threadsSchema.$inferSelect;
-export type ThreadsInsert = typeof threadsSchema.$inferInsert;
+export type ThreadsSelect = typeof threadSchema.$inferSelect;
+export type ThreadsInsert = typeof threadSchema.$inferInsert;

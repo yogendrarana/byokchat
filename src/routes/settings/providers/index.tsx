@@ -2,7 +2,7 @@ import { Key } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getProviderKeys } from "./-lib/functions";
-import { MODEL_PROVIDERS } from "@/lib/model-providers";
+import { MODEL_PROVIDERS } from "@/lib/model";
 import SettingCard from "@/components/settings/setting-card";
 import SettingHeader from "@/components/settings/setting-header";
 import { BYOKProviderCard } from "./-components/byok-provider-card";

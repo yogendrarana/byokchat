@@ -3,23 +3,15 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { MODEL_STORE } from "@/constants/localstorage";
+import { ModelAbilities, ModelModes } from "@/lib/model";
 
 // schema and type
 const ModelSchema = z.object({
   id: z.string(),
+  providerId: z.string(),
   name: z.string(),
-  abilities: z.array(
-    z.enum([
-      "chat",
-      "completion",
-      "reasoning",
-      "vision",
-      "code",
-      "audio",
-      "embedding",
-      "multimodal"
-    ])
-  )
+  mode: z.enum(ModelModes).optional(),
+  abilities: z.array(z.enum(ModelAbilities))
 });
 
 export const ModelStoreSchema = z.object({

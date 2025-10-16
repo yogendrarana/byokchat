@@ -2,12 +2,12 @@ import { json } from "@tanstack/react-start";
 import { createServerFileRoute } from "@tanstack/react-start/server";
 
 import db from "@/lib/db/db";
-import { threadsSchema } from "@/lib/db/schema";
+import { threadSchema } from "@/lib/db/schema";
 
 export const ServerRoute = createServerFileRoute("/api/thread").methods({
   DELETE: async () => {
     try {
-      await db.delete(threadsSchema);
+      await db.delete(threadSchema);
 
       return json({ success: true, message: "Threads deleted successfully." }, { status: 200 });
     } catch (err: any) {
