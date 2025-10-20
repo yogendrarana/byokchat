@@ -27,7 +27,6 @@ function Chat({ threadId }: ChatProps) {
       return;
     }
 
-    // TODO: submit the prompt to the backend
     try {
       handleSubmit(prompt, []);
     } catch (error) {
@@ -41,11 +40,7 @@ function Chat({ threadId }: ChatProps) {
   return (
     <div>
       {/* TODO: if thread id is present render messages */}
-      <AiInput
-        onPromptChange={handlePromptChange}
-        defaultPrompt={prompt}
-        onSubmit={handlePromptSubmit}
-      />
+      <AiInput onPromptChange={handlePromptChange} value={prompt} onSubmit={handlePromptSubmit} />
     </div>
   );
 }

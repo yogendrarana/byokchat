@@ -11,14 +11,14 @@ import ModelSelector from "./model-selector";
 
 interface AiInputProps {
   onSubmit: () => Promise<void>;
-  defaultPrompt?: string;
+  value?: string;
   onPromptChange?: (prompt: string) => void;
   textAreaProps?: TextareaHTMLAttributes<HTMLTextAreaElement>;
 }
 
-function AiInput({ onSubmit, defaultPrompt, onPromptChange, textAreaProps }: AiInputProps) {
+function AiInput({ onSubmit, value = "", onPromptChange, textAreaProps }: AiInputProps) {
   return (
-    <PromptProvider value={defaultPrompt} onSubmit={onSubmit} onChange={onPromptChange}>
+    <PromptProvider value={value} onSubmit={onSubmit} onChange={onPromptChange}>
       <PromptInputContainer>
         <PromptTextarea rows={5} {...textAreaProps} />
         <div className="p-2 border-t flex justify-between">

@@ -160,26 +160,6 @@ export const ServerRoute = createServerFileRoute("/api/chat").methods({
 
       const { threadId, messages, modelId, providerId } = body;
 
-      // Validate required fields
-      if (!modelId || !providerId) {
-        return json(
-          { success: false, message: "Missing provider and model name" },
-          { status: 400 }
-        );
-      }
-
-      // Validate message parts
-      if (
-        !messages ||
-        !Array.isArray((messages as any).parts) ||
-        (messages as any).parts.length === 0
-      ) {
-        return json(
-          { success: false, message: "messages.parts must be a non-empty array" },
-          { status: 400 }
-        );
-      }
-
       // Authenticate user from request headers
       const session = await auth.api.getSession({
         headers: request.headers
@@ -188,6 +168,28 @@ export const ServerRoute = createServerFileRoute("/api/chat").methods({
       const userId = session?.user?.id;
       if (!userId) {
         return json({ success: false, message: "Unauthorized" }, { status: 401 });
+      }
+
+      // Validate required fields
+      if (!modelId || !providerId) {
+        return json(
+          { success: false, message: "Missing provider and model name" },
+          { status: 400 }
+        );
+      }
+
+      if (!Array.isArray(messages) || messages.length === 0) {
+        return json({ success: false, message: "Missing messages array" }, { status: 400 });
+      }
+
+      const latestMessage = messages[messages.length - 1];
+      const lateseMessageParts = latestMessage?.parts ?? [];
+
+      if (!Array.isArray(lateseMessageParts) || lateseMessageParts.length === 0) {
+        return json(
+          { success: false, message: "Message must have at least one part" },
+          { status: 400 }
+        );
       }
 
       // Step 1: Resolve provider/model and user key
@@ -229,8 +231,9 @@ export const ServerRoute = createServerFileRoute("/api/chat").methods({
       }
 
       // Always append current user message to prompt
-      const userParts = (messages as any).parts as any[];
-      const userRole = (messages as any).role ?? "user";
+      const userParts = latestMessage.parts;
+      const userRole = latestMessage.role ?? "user";
+
       const currentUserMessage = toModelMessage({
         messages: [
           {
@@ -245,6 +248,7 @@ export const ServerRoute = createServerFileRoute("/api/chat").methods({
           } as any
         ]
       });
+
       modelMessagesInput = [...modelMessagesInput, ...currentUserMessage];
 
       // Step 3: Stream AI response to client, then persist atomically at the end.
@@ -329,95 +333,96 @@ export const ServerRoute = createServerFileRoute("/api/chat").methods({
               return;
             }
 
-            // Text model streaming
-            const tokenUsage: LanguageModelUsage = {
-              inputTokens: 0,
-              outputTokens: 0,
-              totalTokens: 0,
-              reasoningTokens: 0,
-              cachedInputTokens: 0
-            };
+            if (!isImageModel) {
+              const tokenUsage: LanguageModelUsage = {
+                inputTokens: 0,
+                outputTokens: 0,
+                totalTokens: 0,
+                reasoningTokens: 0,
+                cachedInputTokens: 0
+              };
 
-            let accumulatedText = "";
+              let accumulatedText = "";
 
-            const result = streamText({
-              model: finalModel as LanguageModel,
-              abortSignal: abortController.signal,
-              experimental_transform: smoothStream(),
-              messages: modelMessagesInput || [],
-              temperature: 0.7,
-              onChunk: async ({ chunk }) => {
-                if (chunk.type === "text-delta") {
-                  accumulatedText += chunk.text;
-                  writer.write({ type: "text-delta", delta: chunk.text, id: "text-stream" });
-                }
-              },
-              onFinish: ({ totalUsage }) => {
-                tokenUsage.inputTokens = totalUsage.inputTokens;
-                tokenUsage.outputTokens = totalUsage.outputTokens;
-                tokenUsage.totalTokens = totalUsage.outputTokens;
-                tokenUsage.reasoningTokens = totalUsage.reasoningTokens;
-                tokenUsage.cachedInputTokens = totalUsage.cachedInputTokens;
-              },
-              onAbort: () => {}
-            });
-
-            for await (const _chunk of result.fullStream) {
-              // streaming handled via onChunk above
-            }
-
-            // Optionally generate title for new thread
-            let generatedTitle: string | undefined = undefined;
-            const userTextOnly = (userParts || [])
-              .filter((p) => p?.type === "text")
-              .map((p) => (p as any).text)
-              .join(" ")
-              .trim();
-            if (!threadId && userTextOnly) {
-              try {
-                generatedTitle = await generateThreadTitle({
-                  model: finalModel as LanguageModel,
-                  userMessage: userTextOnly
-                });
-              } catch {}
-            }
-
-            // Persist atomically at the end
-            await db.transaction(async (trx) => {
-              const created = await createThreadAndMessage(trx, {
-                threadId,
-                userId,
-                userMessage: messages
+              const result = streamText({
+                model: finalModel as LanguageModel,
+                abortSignal: abortController.signal,
+                experimental_transform: smoothStream(),
+                messages: modelMessagesInput || [],
+                temperature: 0.7,
+                onChunk: async ({ chunk }) => {
+                  if (chunk.type === "text-delta") {
+                    accumulatedText += chunk.text;
+                    writer.write({ type: "text-delta", delta: chunk.text, id: "text-stream" });
+                  }
+                },
+                onFinish: ({ totalUsage }) => {
+                  tokenUsage.inputTokens = totalUsage.inputTokens;
+                  tokenUsage.outputTokens = totalUsage.outputTokens;
+                  tokenUsage.totalTokens = totalUsage.outputTokens;
+                  tokenUsage.reasoningTokens = totalUsage.reasoningTokens;
+                  tokenUsage.cachedInputTokens = totalUsage.cachedInputTokens;
+                },
+                onAbort: () => {}
               });
 
-              if (!created) {
-                throw new Error("Unable to create thread or message");
+              for await (const _chunk of result.fullStream) {
+                // streaming handled via onChunk above
               }
 
-              await trx
-                .update(messageSchema)
-                .set({
-                  parts: [{ type: "text", text: accumulatedText }],
-                  status: "completed",
-                  metadata: {
-                    providerId,
-                    modelId,
-                    keySource: "user",
-                    tokenUsage,
-                    serverDurationMs: 0
-                  }
-                })
-                .where(eq(messageSchema.id, created.newAssistantMessageId));
+              // Optionally generate title for new thread
+              let generatedTitle: string | undefined = undefined;
+              const userTextOnly = (userParts || [])
+                .filter((p) => p?.type === "text")
+                .map((p) => (p as any).text)
+                .join(" ")
+                .trim();
 
-              if (generatedTitle) {
+              if (!threadId && userTextOnly) {
+                try {
+                  generatedTitle = await generateThreadTitle({
+                    model: finalModel as LanguageModel,
+                    userMessage: userTextOnly
+                  });
+                } catch {}
+              }
+
+              // Persist atomically at the end
+              await db.transaction(async (trx) => {
+                const created = await createThreadAndMessage(trx, {
+                  threadId,
+                  userId,
+                  userMessage: messages
+                });
+
+                if (!created) {
+                  throw new Error("Unable to create thread or message");
+                }
+
                 await trx
-                  .update(threadSchema)
-                  .set({ title: generatedTitle })
-                  .where(eq(threadSchema.id, created.newThreadId));
-              }
-            });
+                  .update(messageSchema)
+                  .set({
+                    parts: [{ type: "text", text: accumulatedText }],
+                    status: "completed",
+                    metadata: {
+                      providerId,
+                      modelId,
+                      keySource: "user",
+                      tokenUsage,
+                      serverDurationMs: 0
+                    }
+                  })
+                  .where(eq(messageSchema.id, created.newAssistantMessageId));
+
+                if (generatedTitle) {
+                  await trx
+                    .update(threadSchema)
+                    .set({ title: generatedTitle })
+                    .where(eq(threadSchema.id, created.newThreadId));
+                }
+              });
+            }
           } catch (error) {
-            console.error("Stream execution error:", error);
             writer.write({
               type: "error",
               errorText: error instanceof Error ? error.message : "An error occurred"
