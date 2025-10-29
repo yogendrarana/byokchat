@@ -267,8 +267,8 @@ export const ServerRoute = createServerFileRoute("/api/chat").methods({
               };
 
               const userTextContent = (userParts || [])
-                .filter((p) => p?.type === "text")
-                .map((p) => (p as any).text)
+                .filter((p: { type: string; }) => p?.type === "text")
+                .map((p: any) => (p as any).text)
                 .join(" ")
                 .trim();
 
@@ -373,8 +373,8 @@ export const ServerRoute = createServerFileRoute("/api/chat").methods({
               // Optionally generate title for new thread
               let generatedTitle: string | undefined = undefined;
               const userTextOnly = (userParts || [])
-                .filter((p) => p?.type === "text")
-                .map((p) => (p as any).text)
+                .filter((p: { type: string; }) => p?.type === "text")
+                .map((p: any) => (p as any).text)
                 .join(" ")
                 .trim();
 
