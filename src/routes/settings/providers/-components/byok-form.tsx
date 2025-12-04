@@ -1,8 +1,8 @@
 import React from "react";
 import { toast } from "sonner";
+import { useRouter } from "@tanstack/react-router";
 import { Key, LoaderIcon, Save, Shield, X } from "lucide-react";
 
-import { router } from "@/router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ interface BYOKKeyFormProps {
 }
 
 export function BYOKKeyForm({ onCancelAddingKey, isEditing = false, provider }: BYOKKeyFormProps) {
+  const router = useRouter();
   const session = authClient.useSession();
 
   const [keyName, setKeyName] = React.useState("");

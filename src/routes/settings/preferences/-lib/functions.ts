@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { getWebRequest } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 
 import db from "@/lib/db/db";
 import { auth } from "@/lib/auth/auth";
@@ -9,11 +9,11 @@ import { setResponseStatus } from "@tanstack/react-start/server";
 
 // update mode
 export const updateMode = createServerFn({ method: "POST" })
-  .validator((input: { userId: string; theme: "dark" | "light" }) => {
-    if (!input.userId || !input.theme) {
+  .inputValidator((data: { userId: string; theme: "dark" | "light" }) => {
+    if (!data.userId || !data.theme) {
       throw json({ success: false, message: "User id or data not provided" }, { status: 400 });
     }
-    return input;
+    return data;
   })
   .handler(async ({ data }) => {
     const { userId, theme } = data;
@@ -47,7 +47,7 @@ export const updateMode = createServerFn({ method: "POST" })
 
 // get user preference
 export const getUserPreference = createServerFn().handler(async () => {
-  const request = getWebRequest();
+  const request = getRequest();
   const session = await auth.api.getSession({
     headers: request.headers
   });
