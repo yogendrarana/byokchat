@@ -10,7 +10,7 @@ import { RegisterUserSchema, type TRegisterUserSchema } from '@/lib/validation/a
 export const registerUser = createServerFn({
   method: 'POST',
 })
-  .validator((data: TRegisterUserSchema) => {
+  .inputValidator((data: TRegisterUserSchema) => {
     const result = RegisterUserSchema.safeParse(data);
     if (!result.success) {
       throw json({ success: false, message: 'Invalid input data' }, { status: 400 });

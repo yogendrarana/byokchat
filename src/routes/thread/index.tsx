@@ -38,7 +38,7 @@ function RouteComponent() {
       <div className="w-full max-w-2xl mx-auto">
         <AiInput
           onPromptChange={(value) => setPrompt(value)}
-          defaultPrompt={prompt}
+          value={prompt}
           onSubmit={handleSubmitPrompt}
         />
       </div>

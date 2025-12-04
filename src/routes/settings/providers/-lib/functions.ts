@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 
 import db from "@/lib/db/db";
 import { auth } from "@/lib/auth/auth";
@@ -9,7 +9,7 @@ import { apiKeySchema, type ApiKeyInsert } from "@/lib/db/schema";
 
 // get provider keys
 export const getProviderKeys = createServerFn().handler(async () => {
-  const request = getWebRequest();
+  const request = getRequest();
   const session = await auth.api.getSession({
     headers: request.headers
   });
@@ -48,12 +48,12 @@ export const getProviderKeys = createServerFn().handler(async () => {
 
 // post provider keys
 export const postProviderKeys = createServerFn({ method: "POST" })
-  .validator((data: Omit<ApiKeyInsert, "userId">) => data)
+  .inputValidator((data: Omit<ApiKeyInsert, "userId">) => data)
   .handler(async (context): Promise<ApiResponse<ApiKeyInsert>> => {
     const { name, key, providerId, active } = context.data;
 
     try {
-      const request = getWebRequest();
+      const request = getRequest();
       const session = await auth.api.getSession({
         headers: request.headers
       });
